@@ -13,6 +13,24 @@ int mac()
   if (g)
   {
     cout << "File open" << endl;
+    
+    // TGMainFrame *pMyMainFrame = new TGMainFrame(gClient->GetDefaultRoot(), 300, 600);
+    // pMyMainFrame->MapWindow();
+    // pMyMainFrame->SetEditable();
+    TGFileBrowser *pBrowser = new TGFileBrowser(gClient->GetRoot());
+    // pMyMainFrame->SetEditable(kFALSE);
+    // pBrowser->AddFSDirectory("/", "/");
+    // pBrowser->GotoDir(gSystem->pwd());
+    
+    TFile* f = TFile::Open("f1.root");
+    
+    
+    // pBrowser->BrowseObj(g);
+    pBrowser->Add(f, "remoteFile");
+    
+    // pMyMainFrame->MapSubwindows();
+    // pMyMainFrame->Layout();
+    
   }
   else{
     cout << "Failed to open the file" << endl;

@@ -25,13 +25,23 @@ g = TFile.Open(httpsMainDir + "00030xxxx/0003038xx/DQM_V0001_PixelPhase1_R000303
 
 if g and g.IsOpen():
   print("File successfully open!")
-  # print(dir(g))
-  for obj in g.GetListOfKeys():
-    print(obj.GetName())
-    if obj.IsFolder():
-      TraverseDirTree(obj.ReadObj(), 1)
-      
-    print("#"*44)
+  # CUSTOM TREE PRINT
+  # for obj in g.GetListOfKeys():
+    # print(obj.GetName())
+    # if obj.IsFolder():
+      # TraverseDirTree(obj.ReadObj(), 1)
+  
+  pMyMainFrame = TGMainFrame(gClient.GetDefaultRoot(), 300, 600);
+  pMyMainFrame.MapWindow();
+  pMyMainFrame.SetEditable();
+  pBrowser = TGFileBrowser(pMyMainFrame);
+  pMyMainFrame.SetEditable(kFALSE);
+  pBrowser.AddFSDirectory("/", "/");
+  pBrowser.GotoDir(gSystem.pwd());
+  pMyMainFrame.MapSubwindows();
+  pMyMainFrame.Layout();
+    
+  
   g.Close()
 else:
   print("Failed to load the file!")
