@@ -10,6 +10,7 @@ public:
     void ApplyFilter();        // @SLOT
     void SelectFiles();        // @SLOT
     void ClearSelectedFiles(); // @SLOT
+    void SetCertificatePath(string certpath);
 
 private:
 
@@ -28,4 +29,5 @@ private:
     TGTextButton*      clear_selected_button;
 
     FileTable          table;
+    string             certificate_path;
 };
