@@ -1,0 +1,6 @@
+UserCertPath = /afs/cern.ch/user/p/pjurgiel/.globus/copy/usercert.pem
+UserPublicKeyPath = /afs/cern.ch/user/p/pjurgiel/.globus/copy/userkey_nopass.pem
+
+UpdateDataBaseScriptPath = remoteROOT/readRemoteDirectories.py
+DatabaseCreation = DATA/toUpdate.txt
+DatabasePath = DATA/rootFiles.db
