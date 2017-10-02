@@ -86,14 +86,18 @@ def spider(hostURL, relURL, key_file, cert_file):
     # Start from the beginning of our collection of pages to visit:
     url = pagesToVisit[0]
     pagesToVisit = pagesToVisit[1:]
-    # try:
-    parser = LinkParser()
-    data, links, files = parser.getLinks(hostURL, url, key_file, cert_file)
-    
-    pagesToVisit = links + pagesToVisit
-    listOfFiles = listOfFiles + files
-    # except:
-      # print(" **Failed!**", url)
+    try:
+      parser = LinkParser()
+      data, links, files = parser.getLinks(hostURL, url, key_file, cert_file)
+      
+      pagesToVisit = links + pagesToVisit
+      listOfFiles = listOfFiles + files
+    except:
+      print("**Failed!**")
+      print("\t" + url)
+      print("Check your certificates first")
+      
+      os.sys.exit(2)                                    # EXIT CODE: 2
       
   # for file in listOfFiles:
     # print(hostURL + file)
@@ -103,50 +107,65 @@ def spider(hostURL, relURL, key_file, cert_file):
 ##################################################################################
 
 def getMaxRun():
-  os.system("python utils/rhapi.py \"select max(r.runnumber) as runMax from runreg_tracker.runs r where r.runnumber > 300000\" --all -f json > tmp.tmp")
-  with open("tmp.tmp", "r") as commandResult:
-    content = ''.join(commandResult.readlines())
-    maxRun = int(content.strip()[1:-1].split(":")[1].strip()[2:-2])
-    print("Max run: %d" %(maxRun))
+  try:
+    os.system("python utils/rhapi.py \"select max(r.runnumber) as runMax from runreg_tracker.runs r where r.runnumber > 300000\" --all -f json > tmp.tmp")
+    with open("tmp.tmp", "r") as commandResult:
+      content = ''.join(commandResult.readlines())
+      maxRun = int(content.strip()[1:-1].split(":")[1].strip()[2:-2])
+      print("Max run: %d" %(maxRun))
+      
+      return maxRun
+  except:
+    print("RHAPI ERROR")
+    print(content)
+    os.sys.exit(4)                                           # EXIT CODE: 4
     
-    return maxRun
+##################################################################################
     
 #1 STARTDIRs PATH or UPDATE
 #2 PATHTODB
-#3 PATHTOGLOBUS
+#3 PATHTOUSERCERT
+#4 PATHTOUSERKEY
 
 hostURL = "https://cmsweb.cern.ch"
 startDirs = ["/dqm/online/data/browse/Original/"]
 pathToDb = "rootFiles.db"
+
 pathToGlobus = "/afs/cern.ch/user/p/pjurgiel/.globus/copy/"
+key_file = pathToGlobus + "userkey_nopass.pem"
+cert_file = pathToGlobus + "usercert.pem"   
 
 print(os.sys.argv)
 for i in range(1, len(os.sys.argv)):
   if i == 1:
     if os.sys.argv[i] == "UPDATE":
       currMax = getMaxRun()
+      
       runHighStr = str(currMax // 10000)
       leadingZeros = 5 - len(runHighStr)
       startDirs = ["/dqm/online/data/browse/Original/" + ("0" * leadingZeros) + runHighStr + "xxxx/"]
     elif os.sys.argv[i] == "default":
       continue    
     else:
-      with open(os.sys.argv[i], "r") as pathFile:
-        startDirs = pathFile.readlines()
-        startDirs = [line.strip() for line in startDirs]
+      try:
+        with open(os.sys.argv[i], "r") as pathFile:
+          startDirs = pathFile.readlines()
+          startDirs = [line.strip() for line in startDirs]
+      except:
+        print("File <%s> access error" % (os.sys.argv[i]))
+        os.sys.exit(3)                                      # EXIT CODE: 3
   elif i == 2:
     pathToDb = os.sys.argv[i]
   elif i == 3:
-    pathToGlobus = os.sys.argv[i]
+    cert_file = os.sys.argv[i]
+  elif i == 4:
+    key_file = os.sys.argv[i]
 
-key_file = pathToGlobus + "userkey_nopass.pem"
-cert_file = pathToGlobus + "usercert.pem"    
-    
 print("Crawling starting points:")
 for i in startDirs:
   print("\t" + i)
-print("Starting querying the remote %s server..."%(hostURL))
-print("Path to certificates: %s" % (pathToGlobus))
+print("Starting querying the remote %s server..." % (hostURL))
+print("With the certificate pair: %s : %s" % (cert_file, key_file))
 
 filesToAppend = []
 for d in startDirs:
@@ -157,26 +176,43 @@ uniqueFilesToAppend = []
 ### UPADTE MODE
 if os.path.exists(pathToDb):
   print("DB exists already - entering update mode")
-  with open(pathToDb, "r") as currentDB:
-    currentDBContentBefore = currentDB.readlines()
-    currentDBContent = [line.strip() for line in currentDBContentBefore]
-    
-    for file in filesToAppend:
-      fullPath = hostURL + file
-      if fullPath not in currentDBContent:
-        print("Adding: %s" % fullPath)
-        uniqueFilesToAppend.append(fullPath)
-      # else:
-        # print("%s is already in DB" % (fullPath))
-  with open(pathToDb, "a") as currentDB:
-    for u in uniqueFilesToAppend:
-      currentDB.write(u + "\n")
+  
+  try:
+    with open(pathToDb, "r") as currentDB:
+      currentDBContentBefore = currentDB.readlines()
+      currentDBContent = [line.strip() for line in currentDBContentBefore]
+      
+      for file in filesToAppend:
+        fullPath = hostURL + file
+        if fullPath not in currentDBContent:
+          print("Adding: %s" % fullPath)
+          uniqueFilesToAppend.append(fullPath)
+        # else:
+          # print("%s is already in DB" % (fullPath))
+    with open(pathToDb, "a") as currentDB:
+      for u in uniqueFilesToAppend:
+        currentDB.write(u + "\n")
+  except:
+    print("File <%s> access error" % (pathToDb))
+    os.sys.exit(3)                                      # EXIT CODE: 3
+        
+  os.sys.exit(0)                                        # EXIT CODE: 0
 ### CREATE MODE   
 else:
   print("DB is going to be created from scratch")
-  with open(pathToDb, "w") as currentDB:
-    for f in filesToAppend:
-      currentDB.write(hostURL + f + "\n")
+  
+  try:
+    with open(pathToDb, "w") as currentDB:
+      for f in filesToAppend:
+        currentDB.write(hostURL + f + "\n")
+  except:
+    print("File <%s> access error" % (pathToDb))
+    os.sys.exit(3)                                      # EXIT CODE: 3
+    
+  os.sys.exit(0)                                        # EXIT CODE: 0
+
+#should be never reached
+os.sys.exit(1)                                          # EXIT CODE: 1
       
 
 
