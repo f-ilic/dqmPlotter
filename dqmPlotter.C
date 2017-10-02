@@ -5,6 +5,7 @@
 
 enum EMyMessageTypes {
    M_FILE_OPEN,
+   M_UPDATE_INDEX,
    M_FILE_EXIT
 };
 
@@ -17,8 +18,9 @@ public:
         menu_bar = new TGMenuBar(main_frame, 35, 50, kHorizontalFrame);
         popup_menu = new TGPopupMenu(gClient->GetRoot());
         popup_menu->AddEntry("Set Certificate", M_FILE_OPEN, 0, gClient->GetPicture("bld_open.png"));
-        popup_menu->AddEntry("other", M_FILE_EXIT, 0, gClient->GetPicture("bld_exit.png"));
-        menu_bar->AddPopup("Menu", popup_menu, new TGLayoutHints(kLHintsLeft, 0, 4, 0, 0));
+        popup_menu->AddEntry("Update Index", M_UPDATE_INDEX, 0, gClient->GetPicture("refresh.png"));
+//        popup_menu->AddEntry("Exit", M_FILE_EXIT, 0, gClient->GetPicture("bld_exit.png"));
+        menu_bar->AddPopup("File Browser", popup_menu, new TGLayoutHints(kLHintsLeft, 0, 4, 0, 0));
         main_frame->AddFrame(menu_bar, new TGLayoutHints(kLHintsLeft ,2,2,2,2));
         popup_menu->Connect("Activated(Int_t)", "Menu", this, "HandleMenu(Int_t)");
     }
@@ -60,7 +62,9 @@ void Menu::HandleMenu(Int_t menu_id) {
 
 // ==================== END MENU ====================
 
+#include <iostream>
 void dqmPlotter() {
+//    system("./test.sh"); // this is how to call external script
     int width = 600;
     int height = 1000;
     TGMainFrame* main_frame = new TGMainFrame(gClient->GetRoot(), width, height);
