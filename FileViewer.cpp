@@ -33,9 +33,10 @@ void FileViewer::DrawInFrame(TGMainFrame* main_frame){
 
 TFile* FileViewer::GetRemoteFile(string filepath) {
 #define ROOTDavixIsAPieceOfShit true
-    if(!ROOTDavixIsAPieceOfShit) {
-        gEnv->SetValue("Davix.GSI.UserCert", "/home/fil/Documents/usercert.pem");
-        gEnv->SetValue("Davix.GSI.UserKey", "/home/fil/Documents/userkey.pem");
+    // if(!ROOTDavixIsAPieceOfShit) 
+    {
+        gEnv->SetValue("Davix.GSI.UserCert", "/afs/cern.ch/user/p/pjurgiel/.globus/copy/usercert.pem");
+        gEnv->SetValue("Davix.GSI.UserKey", "/afs/cern.ch/user/p/pjurgiel/.globus/copy/userkey_nopass.pem");
         gEnv->SetValue("Davix.Debug", 1);
     }
     return TFile::Open(filepath.c_str());

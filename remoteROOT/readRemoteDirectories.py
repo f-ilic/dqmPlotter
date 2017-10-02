@@ -107,13 +107,6 @@ def spider(hostURL, relURL, key_file, cert_file):
 ##################################################################################
 
 def getMaxRun():
-<<<<<<< HEAD
-  os.system("python rhapi.py \"select max(r.runnumber) as runMax from runreg_tracker.runs r where r.runnumber > 300000\" --all -f json > tmp.tmp")
-  with open("tmp.tmp", "r") as commandResult:
-    content = ''.join(commandResult.readlines())
-    maxRun = int(content.strip()[1:-1].split(":")[1].strip()[2:-2])
-    print("Max run: %d" %(maxRun))
-=======
   try:
     os.system("python utils/rhapi.py \"select max(r.runnumber) as runMax from runreg_tracker.runs r where r.runnumber > 300000\" --all -f json > tmp.tmp")
     with open("tmp.tmp", "r") as commandResult:
@@ -126,7 +119,6 @@ def getMaxRun():
     print("RHAPI ERROR")
     print(content)
     os.sys.exit(4)                                           # EXIT CODE: 4
->>>>>>> 385aa066b5f2e9e28cd1524824c1dd88b1da468f
     
 ##################################################################################
     

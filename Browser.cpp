@@ -93,8 +93,9 @@ void Browser::SelectFiles() {
         string obj_name = obj->GetTitle();
         string val = table.GetPathFromName(obj_name);
         cout << "found value " << val << endl;
-        selected_files.AddEntry(obj_name, val);    file_view.OpenFileInTreeView("./f1.root");
-
+        selected_files.AddEntry(obj_name, val);    
+        file_view.OpenFileInTreeView(val);
+        
     }
 
 //    selected_files.DisplayInListBox(selected_files_box);

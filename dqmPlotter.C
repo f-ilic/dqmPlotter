@@ -108,7 +108,7 @@ void Menu::UpdateIndex(){
         TString cmd = "python " + app_path + updatescript_path + " " +
                 app_path + recreation_str +    " " +
                 app_path + db_path +           " " +
-                certificate_path +             "x " +
+                certificate_path +             " " +
                 publickey_path;
 
         cout << "Running: " << cmd << endl;
