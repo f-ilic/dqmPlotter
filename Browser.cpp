@@ -77,9 +77,9 @@ void Browser::ApplyFilter() {
     result.DisplayInListBox(available_files_box);
 }
 
-void Browser::ClearSelectedFiles() {
-    selected_files_box->RemoveAll();
-}
+//void Browser::ClearSelectedFiles() {
+//    selected_files_box->RemoveAll();
+//}
 
 void Browser::SelectFiles() {
     selection_in_box->Clear();

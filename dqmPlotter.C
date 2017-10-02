@@ -1,5 +1,5 @@
 #include "Browser.cpp"
-
+#include "FileViewer.cpp"
 
 // ==================== START MENU ====================
 
@@ -72,11 +72,14 @@ void dqmPlotter() {
     main_frame->SetWindowName("Browser");
     Menu*  menu = new Menu(main_frame);
     Browser* fs = new Browser(main_frame);
+    FileViewer* remotefilebrowser = new FileViewer(main_frame);
 
     main_frame->MapSubwindows();
     main_frame->MapWindow();
 
     main_frame->MoveResize(100, 100, width, height);
+
+
 }
 
 
