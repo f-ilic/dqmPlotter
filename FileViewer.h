@@ -4,10 +4,12 @@
 
 class FileViewer {
 public:
-    FileViewer(TGMainFrame* main_frame);
+    FileViewer();
     void TreeItemDoubleClicked(TGListTreeItem* item, int id);
-    void StartBtnClicked();
+//    void StartBtnClicked();
     void OpenFileInTreeView(string remote_file_path);
+
+    void DrawInFrame(TGMainFrame* main_frame);
 
 private:
     TFile* GetRemoteFile(string filepath);
@@ -16,7 +18,7 @@ private:
     TGCanvas*       file_tree;
     TGViewPort*     view_port;
     TGListTree*     list_tree;
-    TGTextButton*   load_file_button;
+//    TGTextButton*   load_file_button;
 
 
     const TGPicture* popen = gClient->GetPicture("ofolder_t.xpm");

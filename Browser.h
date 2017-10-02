@@ -1,9 +1,10 @@
 #include "FileTable.cpp"
+#include "FileViewer.cpp"
 
 class Browser {
 
 public:
-    Browser(TGMainFrame*);
+    Browser();
     void GetItems() { cout << "FileSearch::GetItems" << endl; }
 
 
@@ -11,6 +12,9 @@ public:
     void SelectFiles();        // @SLOT
     void ClearSelectedFiles(); // @SLOT
     void SetCertificatePath(string certpath);
+
+    void DrawInFrame(TGMainFrame* mf);
+
 
 private:
 
@@ -30,4 +34,6 @@ private:
 
     FileTable          table;
     string             certificate_path;
+
+    FileViewer         file_view;
 };

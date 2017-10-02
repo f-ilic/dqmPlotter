@@ -1,5 +1,4 @@
 #include "Browser.cpp"
-#include "FileViewer.cpp"
 
 // ==================== START MENU ====================
 
@@ -11,23 +10,24 @@ enum EMyMessageTypes {
 
 class Menu {
 public:
-    Menu(TGMainFrame* main_frame){
-        mf = main_frame;
+    Menu(){}
+
+    void HandleMenu(Int_t menu_id);
+    TGMainFrame* mf;
+    string certificate_path = "";
+
+    void DrawInFrame(TGMainFrame* main_frame) {
         TGMenuBar*    menu_bar;
         TGPopupMenu*  popup_menu;
         menu_bar = new TGMenuBar(main_frame, 35, 50, kHorizontalFrame);
         popup_menu = new TGPopupMenu(gClient->GetRoot());
         popup_menu->AddEntry("Set Certificate", M_FILE_OPEN, 0, gClient->GetPicture("bld_open.png"));
         popup_menu->AddEntry("Update Index", M_UPDATE_INDEX, 0, gClient->GetPicture("refresh.png"));
-//        popup_menu->AddEntry("Exit", M_FILE_EXIT, 0, gClient->GetPicture("bld_exit.png"));
+        popup_menu->AddEntry("Exit", M_FILE_EXIT, 0, gClient->GetPicture("bld_exit.png"));
         menu_bar->AddPopup("File Browser", popup_menu, new TGLayoutHints(kLHintsLeft, 0, 4, 0, 0));
         main_frame->AddFrame(menu_bar, new TGLayoutHints(kLHintsLeft ,2,2,2,2));
         popup_menu->Connect("Activated(Int_t)", "Menu", this, "HandleMenu(Int_t)");
     }
-
-    void HandleMenu(Int_t menu_id);
-    TGMainFrame* mf;
-    string certificate_path = "";
 
     void SetCertificatePath(string path){
         certificate_path = path;
@@ -59,6 +59,20 @@ void Menu::HandleMenu(Int_t menu_id) {
 }
 
 
+//class DQMPlotter {
+//public:
+//    DQMPlotter() {
+//        // define the views layout
+//        // add the things to the right layout
+//    }
+
+//private:
+//    Menu        menu;
+//    Browser     browser;
+//    FileViewer  file_view;
+//    //Plotter   plotter;
+//};
+
 
 // ==================== END MENU ====================
 
@@ -70,16 +84,15 @@ void dqmPlotter() {
     TGMainFrame* main_frame = new TGMainFrame(gClient->GetRoot(), width, height);
 
     main_frame->SetWindowName("Browser");
-    Menu*  menu = new Menu(main_frame);
-    Browser* fs = new Browser(main_frame);
-    FileViewer* remotefilebrowser = new FileViewer(main_frame);
+    Menu*  menu = new Menu();
+    Browser* browser = new Browser();
+
+    menu->DrawInFrame(main_frame);
+    browser->DrawInFrame(main_frame);
 
     main_frame->MapSubwindows();
     main_frame->MapWindow();
-
-    main_frame->MoveResize(100, 100, width, height);
-
-
+    main_frame->Layout();
 }
 
 

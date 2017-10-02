@@ -1,27 +1,6 @@
 #include "FileViewer.h"
 
-FileViewer::FileViewer(TGMainFrame* main_frame) {
-    // canvas widget
-    file_tree = new TGCanvas(main_frame,100,100);
-    file_tree->SetName("m_fileTree");
-
-    // canvas viewport
-    view_port = file_tree->GetViewPort();
-
-    load_file_button = new TGTextButton(main_frame,"Load File From Filesystem");
-    load_file_button->Connect("Clicked()", "FileViewer", this, "StartBtnClicked()");
-
-
-    list_tree = new TGListTree(file_tree,kHorizontalFrame);
-    list_tree->Connect("DoubleClicked(TGListTreeItem*, Int_t)", "FileViewer", this, "TreeItemDoubleClicked(TGListTreeItem*, Int_t)");
-
-    view_port->AddFrame(list_tree);
-    list_tree->SetLayoutManager(new TGHorizontalLayout(list_tree));
-
-    file_tree->SetContainer(list_tree);
-
-    main_frame->AddFrame(file_tree, new TGLayoutHints(kLHintsExpandX | kLHintsExpandY, 2, 2, 2, 2));
-    main_frame->AddFrame(load_file_button ,new TGLayoutHints(kLHintsExpandX, 2, 2, 2, 2));
+FileViewer::FileViewer() {
 }
 
 void FileViewer::OpenFileInTreeView(string remote_file_path) {
@@ -36,6 +15,20 @@ void FileViewer::OpenFileInTreeView(string remote_file_path) {
             tree_items_map[item] = ((TKey*)i);
         }
     }
+}
+
+void FileViewer::DrawInFrame(TGMainFrame* main_frame){
+    // canvas widget
+    file_tree = new TGCanvas(main_frame,100,100);
+
+    // canvas viewport
+    view_port = file_tree->GetViewPort();
+    list_tree = new TGListTree(file_tree,kHorizontalFrame);
+    list_tree->Connect("DoubleClicked(TGListTreeItem*, Int_t)", "FileViewer", this, "TreeItemDoubleClicked(TGListTreeItem*, Int_t)");
+    view_port->AddFrame(list_tree);
+    list_tree->SetLayoutManager(new TGHorizontalLayout(list_tree));
+    file_tree->SetContainer(list_tree);
+    main_frame->AddFrame(file_tree, new TGLayoutHints(kLHintsExpandX | kLHintsExpandY, 2, 2, 2, 2));
 }
 
 TFile* FileViewer::GetRemoteFile(string filepath) {
@@ -96,20 +89,11 @@ void FileViewer::TreeItemDoubleClicked(TGListTreeItem* item, int id) {
     cout << "FileViewer::TreeItemDoubleClicked: " << id << endl;
     TObject* object = tree_items_map[item]->ReadObj();
 
-//    Double_t w = 600;
-//    Double_t h = 600;
-//    TCanvas * c1 = new TCanvas("c", "c", w, h);
-//    c1->cd(1);
-//    ((TH1*)object)->Draw();
+    Double_t w = 600;
+    Double_t h = 600;
+    TCanvas * c1 = new TCanvas("c", "c", w, h);
+    c1->cd(1);
+    ((TH1*)object)->Draw();
 
     AddChildren(item);
-}
-
-void FileViewer::StartBtnClicked() {
-    cout << "FileViewer::StartBtnClicked()" << endl;
-    TGFileInfo file_info_;
-    const char *filetypes[] = {"ROOT files", "*.root", 0, 0};
-    file_info_.fFileTypes = filetypes;
-    TGFileDialog* loadDialog = new TGFileDialog(gClient->GetDefaultRoot(), 0, kFDOpen, &file_info_);
-    OpenFileInTreeView(file_info_.fFilename);
 }
