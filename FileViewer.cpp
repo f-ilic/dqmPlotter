@@ -28,13 +28,18 @@ void FileViewer::DrawInFrame(TGMainFrame* main_frame){
     view_port->AddFrame(list_tree);
     list_tree->SetLayoutManager(new TGHorizontalLayout(list_tree));
     file_tree->SetContainer(list_tree);
+
+    remove_item_button = new TGTextButton(main_frame, "Remove Selected Item (from view)");
+
     main_frame->AddFrame(file_tree, new TGLayoutHints(kLHintsExpandX | kLHintsExpandY, 2, 2, 2, 2));
+    main_frame->AddFrame(remove_item_button, new TGLayoutHints(kLHintsExpandX, 2, 2, 2, 2));
+
+    remove_item_button->Connect("Clicked()", "FileViewer", this, "DeleteSelectedItem()");
 }
 
 TFile* FileViewer::GetRemoteFile(string filepath) {
 #define ROOTDavixIsAPieceOfShit true
-    // if(!ROOTDavixIsAPieceOfShit) 
-    {
+    if(!ROOTDavixIsAPieceOfShit) {
         gEnv->SetValue("Davix.GSI.UserCert", "/afs/cern.ch/user/p/pjurgiel/.globus/copy/usercert.pem");
         gEnv->SetValue("Davix.GSI.UserKey", "/afs/cern.ch/user/p/pjurgiel/.globus/copy/userkey_nopass.pem");
         gEnv->SetValue("Davix.Debug", 1);

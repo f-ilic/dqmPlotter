@@ -71,8 +71,6 @@ void Menu::HandleMenu(Int_t menu_id) {
 }
 
 void Menu::DrawInFrame(TGMainFrame *main_frame) {
-
-
     TGMenuBar*    menu_bar;
     TGPopupMenu*  popup_menu;
     menu_bar = new TGMenuBar(main_frame, 35, 50, kHorizontalFrame);
@@ -140,10 +138,9 @@ void Menu::UpdateIndex(){
 
 // ==================== END MENU ====================
 
-#include <iostream>
 void dqmPlotter() {
     //    system("./test.sh"); // this is how to call external script
-    int width = 600;
+    int width = 400;
     int height = 1000;
     TGMainFrame* main_frame = new TGMainFrame(gClient->GetRoot(), width, height);
 

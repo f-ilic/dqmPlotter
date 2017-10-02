@@ -26,6 +26,13 @@ void FileTable::AddEntry(string k, string v) {
     table[k] = v;
 }
 
+void FileTable::DisplayInTreeView(FileViewer& fileview){
+    for(auto& e : table) {
+        fileview.OpenFileInTreeView(e.second);
+    }
+
+}
+
 void FileTable::PrintDebug() {
     for(auto& e : table)
         cout << "key: " << e.first << "  value: " << e.second << endl;
@@ -59,3 +66,5 @@ FileTable FileTable::FilterNamesBy(vector<string> filters) {
     }
     return filtered;
 }
+
+

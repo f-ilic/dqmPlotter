@@ -1,25 +1,17 @@
 #include "FileTable.cpp"
-#include "FileViewer.cpp"
 
 class Browser {
 
 public:
     Browser();
-    void GetItems() { cout << "FileSearch::GetItems" << endl; }
-
-
     void ApplyFilter();        // @SLOT
     void SelectFiles();        // @SLOT
     void ClearSelectedFiles(); // @SLOT
     void SetCertificatePath(string certpath);
-
     void DrawInFrame(TGMainFrame* mf);
 
-
 private:
-
     TGVerticalFrame*   top_frame;
-    TGVerticalFrame*   bot_frame;
     TGHorizontalFrame* search_frame;
     TGTextEntry*       search_box;
     TGListBox*         available_files_box;

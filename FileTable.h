@@ -1,5 +1,4 @@
-#include <vector>
-#include <map>
+#include "FileViewer.cpp"
 
 class TGListBox;
 
@@ -13,6 +12,7 @@ public:
     void DisplayInListBox(TGListBox* listbox);
     void PrintDebug();
     void AddEntry(string k, string v);
+    void DisplayInTreeView(FileViewer& fileview);
 
 private:
     map<string, string> table;          // key=name, value=path
