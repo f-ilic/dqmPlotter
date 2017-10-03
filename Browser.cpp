@@ -2,9 +2,10 @@
 
 Browser::Browser() {
     table.FillFromFile("./rootfiles.txt");
+    table.GetUniqueModulesFromFile("./rootfiles.txt");
 }
 
-void Browser::DrawInFrame(TGMainFrame* mf) {
+void Browser::DrawInFrame(TGCompositeFrame *mf) {
     top_frame  = new TGVerticalFrame(mf);
     search_frame = new TGHorizontalFrame(top_frame);
 
@@ -23,14 +24,14 @@ void Browser::DrawInFrame(TGMainFrame* mf) {
     top_frame->AddFrame(available_files_box, new TGLayoutHints(kLHintsExpandX | kLHintsExpandY, 2, 2, 2, 2));
     top_frame->AddFrame(selectfiles_button, new TGLayoutHints(kLHintsExpandX, 2, 2, 2, 2));
 
-    //TODO: this needs to happen automatically from the 'rootfiles.txt'
-    module_dropdown->AddEntry("All", 0);
-    module_dropdown->AddEntry("Ecal", 1);
-    module_dropdown->AddEntry("Pixel", 2);
-    module_dropdown->AddEntry("PixelPhase1", 3);
-    module_dropdown->AddEntry("SiStrip", 4);
+    set<string> modules = table.GetUniqueModulesFromFile("./rootfiles.txt");
 
-    module_dropdown->Resize(150, 20);
+    int j=1;
+    for(auto& e : modules) {
+        module_dropdown->AddEntry(e.c_str(), j++);
+    }
+
+    module_dropdown->Resize(200, 20);
     module_dropdown->Select(0);
 
     available_files_box->SetMultipleSelections(true);
@@ -69,8 +70,8 @@ void Browser::SelectFiles() {
         string obj_name = obj->GetTitle();
         string val = table.GetPathFromName(obj_name);
         cout << "found value " << val << endl;
-        selected_files.AddEntry(obj_name, "./f1.root");
+        selected_files.AddEntry(obj_name, "./f1.root"); // val goes here if in real use
     }
-    selected_files.PrintDebug();
+//    selected_files.PrintDebug();
     selected_files.DisplayInTreeView(file_view);
 }

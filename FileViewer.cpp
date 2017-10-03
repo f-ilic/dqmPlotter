@@ -3,38 +3,79 @@
 FileViewer::FileViewer() {
 }
 
-void FileViewer::OpenFileInTreeView(string remote_file_path) {
+void FileViewer::OpenFileInTreeView(string remote_file_path, string displayname) {
     TFile* remote_file = GetRemoteFile(remote_file_path);
-    if (remote_file) {
-        cout << "Remote file successfully open!" << endl;
-
+    if (remote_file && !IsOpened(displayname)) {
         for (auto i: *(remote_file->GetListOfKeys())) {
-            cout << i->GetName() << endl;
-            TGListTreeItem* item = list_tree->AddItem(nullptr, i->GetName());
+            TGListTreeItem* item = list_tree->AddItem(nullptr, displayname.c_str());
             item->SetPictures(popen, pclose);
             tree_items_map[item] = ((TKey*)i);
+            open_files[displayname] = item;
         }
     }
 }
 
-void FileViewer::DrawInFrame(TGMainFrame* main_frame){
+bool FileViewer::IsOpened(string s) {
+    return (open_files.find(s) != open_files.end());
+}
+
+void FileViewer::DrawInFrame(TGCompositeFrame* main_frame){
+    TGVerticalFrame* top_frame = new TGVerticalFrame(main_frame);
+
     // canvas widget
-    file_tree = new TGCanvas(main_frame,100,100);
+    file_tree = new TGCanvas(top_frame,100,100);
 
     // canvas viewport
     view_port = file_tree->GetViewPort();
-    list_tree = new TGListTree(file_tree,kHorizontalFrame);
+    list_tree = new TGListTree(file_tree, kHorizontalFrame);
     list_tree->Connect("DoubleClicked(TGListTreeItem*, Int_t)", "FileViewer", this, "TreeItemDoubleClicked(TGListTreeItem*, Int_t)");
     view_port->AddFrame(list_tree);
     list_tree->SetLayoutManager(new TGHorizontalLayout(list_tree));
     file_tree->SetContainer(list_tree);
 
-    remove_item_button = new TGTextButton(main_frame, "Remove Selected Item (from view)");
+    remove_item_button = new TGTextButton(top_frame, "Remove Selected");
+    remove_all_button = new TGTextButton(top_frame, "Remove All");
 
-    main_frame->AddFrame(file_tree, new TGLayoutHints(kLHintsExpandX | kLHintsExpandY, 2, 2, 2, 2));
-    main_frame->AddFrame(remove_item_button, new TGLayoutHints(kLHintsExpandX, 2, 2, 2, 2));
+    top_frame->AddFrame(file_tree, new TGLayoutHints(kLHintsExpandX | kLHintsExpandY, 2, 2, 2, 2));
+    top_frame->AddFrame(remove_all_button, new TGLayoutHints(kLHintsExpandX, 2, 2, 2, 2));
+    top_frame->AddFrame(remove_item_button, new TGLayoutHints(kLHintsExpandX, 2, 2, 2, 2));
 
-    remove_item_button->Connect("Clicked()", "FileViewer", this, "DeleteSelectedItem()");
+    remove_all_button->Connect("Clicked()", "FileViewer", this, "RemoveAll()");
+    remove_item_button->Connect("Clicked()", "FileViewer", this, "RemoveSelectedItem()");
+
+    main_frame->AddFrame(top_frame, new TGLayoutHints(kLHintsExpandX | kLHintsExpandY, 2, 2, 2, 2));
+}
+
+void FileViewer::PrintSelectedItem() {
+    TGListTreeItem* item = list_tree->GetSelected();
+    cout << tree_items_map[item]->ReadObj()->GetName() << endl;
+}
+
+void FileViewer::RemoveSelectedItem() {
+    TGListTreeItem* item = list_tree->GetSelected();
+
+    if(!item)
+        return;
+
+    tree_items_map.erase(item);
+    list_tree->DeleteItem(item);
+
+    // if the item is a root dir of a file
+    // remove the directory from open_files;
+    for(auto& e : open_files) {
+        if(e.second==item) {
+            open_files.erase(e.first);
+        }
+    }
+
+}
+
+void FileViewer::RemoveAll() {
+    for(auto& e : open_files) {
+        list_tree->DeleteItem(e.second);
+    }
+    open_files.clear();
+    tree_items_map.clear();
 }
 
 TFile* FileViewer::GetRemoteFile(string filepath) {

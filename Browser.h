@@ -6,9 +6,8 @@ public:
     Browser();
     void ApplyFilter();        // @SLOT
     void SelectFiles();        // @SLOT
-    void ClearSelectedFiles(); // @SLOT
     void SetCertificatePath(string certpath);
-    void DrawInFrame(TGMainFrame* mf);
+    void DrawInFrame(TGCompositeFrame* mf);
 
 private:
     TGVerticalFrame*   top_frame;
@@ -22,7 +21,6 @@ private:
     TList*             selection_in_box;
 
     TGListBox*         selected_files_box;
-    TGTextButton*      clear_selected_button;
 
     FileTable          table;
     string             certificate_path;

@@ -144,12 +144,17 @@ void dqmPlotter() {
     int height = 1000;
     TGMainFrame* main_frame = new TGMainFrame(gClient->GetRoot(), width, height);
 
-    main_frame->SetWindowName("Browser");
+    main_frame->SetWindowName("DQM Plotter");
+
+    TGHorizontalFrame* left = new TGHorizontalFrame(main_frame);
+
     Menu*  menu = new Menu();
     Browser* browser = new Browser();
 
     menu->DrawInFrame(main_frame);
-    browser->DrawInFrame(main_frame);
+    browser->DrawInFrame(left);
+
+    main_frame->AddFrame(left, new TGLayoutHints(kLHintsExpandX | kLHintsExpandY, 2, 2, 2, 2));
 
     main_frame->MapSubwindows();
     main_frame->MapWindow();

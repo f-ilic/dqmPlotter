@@ -18,8 +18,11 @@ void FileTable::FillFromFile(string path_to_file_to_load) {
 
         int beginIdx = filenamepath.rfind('/');
         displayname = filenamepath.substr(beginIdx + 1);
-        this->AddEntry(displayname, filenamepath);
+        // TODO: something fishy here, "" entry is added
+        if(displayname.compare(""))
+            this->AddEntry(displayname, filenamepath);
     }
+    in.close();
 }
 
 void FileTable::AddEntry(string k, string v) {
@@ -27,10 +30,37 @@ void FileTable::AddEntry(string k, string v) {
 }
 
 void FileTable::DisplayInTreeView(FileViewer& fileview){
+    fileview.RemoveAll();
     for(auto& e : table) {
-        fileview.OpenFileInTreeView(e.second);
+        fileview.OpenFileInTreeView(e.second, e.first);
     }
 
+}
+
+set<string> FileTable::GetUniqueModulesFromFile(string filepath) {
+    set<string> ret;
+    std::ifstream in(filepath);
+
+    char str[255];
+
+    string filename;
+    string modulename;
+
+    while(in) {
+        in.getline(str, 255);  // delim defaults to '\n'
+        filename=string(str);
+        int beginIdx = filename.rfind("/");
+        filename = filename.substr(beginIdx + 1);
+
+        // TODO: something fishy here, "" entry is added
+        if(filename.compare("")) {
+            filename = filename.substr(10, filename.size());
+            modulename = filename.substr(0, filename.find("_"));
+            ret.insert(modulename);
+        }
+    }
+    in.close();
+    return ret;
 }
 
 void FileTable::PrintDebug() {
