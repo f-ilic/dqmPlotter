@@ -1,56 +1,8 @@
-#include <fstream>
-#include <map>
+#include "Configuration.h"
 
-enum ConfigOpts{
-  USERCERTPATH = 0,
-  USERPUBLICKEYPATH,
-  UPDATEDATABASESCRIPTPATH,
-  DATABASECREATION,
-  DATABASEPATH
-};
+// ClassImp(Configuration)
 
-class CConfiguration final
-{
-  string config_path{};
-  map<string, string> configMap;
-  
-  const string configTitles[5] = {"UserCertPath",
-                                 "UserPublicKeyPath",
-                                 "UpdateDataBaseScriptPath",
-                                 "DatabaseCreation",
-                                 "DatabasePath"};
-  
-  public:    
-    const string& GetValue(ConfigOpts opt)
-    {
-      return configMap[string(configTitles[opt])];
-    }
-    
-    friend ostream& operator<< (ostream& stream, const CConfiguration& config);
-    
-    static CConfiguration& GetConfiguration(string config_path = "DATA/con.fig")
-    {
-      static CConfiguration config(config_path);
-      return config;
-    }
-    
-    void UpdateKey(ConfigOpts opt, const string& val)
-    {
-      configMap[string(configTitles[opt])] = val;
-    }
-    
-  private:
-    void LoadConfiguration();
-    
-  protected:
-    CConfiguration(string config_path = "DATA/con.fig") : config_path(config_path)
-    {
-      LoadConfiguration();
-    }
-    
-};
-
-void CConfiguration::LoadConfiguration()
+void Configuration::LoadConfiguration()
 {
   std::ifstream file(config_path);
   string line;
@@ -69,7 +21,7 @@ void CConfiguration::LoadConfiguration()
   file.close();        
 }
 
-ostream& operator<< (ostream& stream, const CConfiguration& config)
+ostream& operator<< (ostream& stream, const Configuration& config)
 {
   for (auto kv : config.configMap)
   {
@@ -80,9 +32,9 @@ ostream& operator<< (ostream& stream, const CConfiguration& config)
 }
 
 // void Configuration(){
-  // cout << CConfiguration::GetConfiguration();
+  // cout << Configuration::GetConfiguration();
   // cout << "$$$$$$$$$$$$$$$$$$$$$$" << endl;
   
-  // CConfiguration::GetConfiguration().UpdateKey(USERCERTPATH, "wtf");
-  // cout << CConfiguration::GetConfiguration().GetValue(USERCERTPATH) << endl;
+  // Configuration::GetConfiguration().UpdateKey(Configuration::USERCERTPATH, "wtf");
+  // cout << Configuration::GetConfiguration().GetValue(Configuration::USERCERTPATH) << endl;
 // }

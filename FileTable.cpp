@@ -1,5 +1,7 @@
 #include "FileTable.h"
 
+// #include "Configuration.cpp"
+
 string FileTable::GetPathFromName(string name) {
     return table[name];
 }
