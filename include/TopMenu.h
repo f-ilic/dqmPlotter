@@ -2,7 +2,7 @@
 #define TOPMENU__H_
 
 // R__LOAD_LIBRARY(lib/Configuration_cpp.so)
-#include "Configuration.h"
+#include "../include/Configuration.h"
 
 #include "TApplication.h"
 #include "TSystem.h"

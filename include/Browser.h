@@ -1,4 +1,10 @@
-#include "FileTable.cpp"
+#ifndef BROWSER__H_
+#define BROWSER__H_
+
+#include "../include/FileTable.h"
+
+#include "TGTextEntry.h"
+#include "TGComboBox.h"
 
 class Browser {
 
@@ -27,3 +33,4 @@ private:
 
     FileViewer         file_view;
 };
+#endif

@@ -1,4 +1,4 @@
-#include "FileViewer.h"
+#include "../include/FileViewer.h"
 
 FileViewer::FileViewer() {
 }
@@ -79,7 +79,7 @@ void FileViewer::RemoveAll() {
 }
 
 TFile* FileViewer::GetRemoteFile(string filepath) {
-#define ROOTDavixIsAPieceOfShit true
+#define ROOTDavixIsAPieceOfShit false
     if(!ROOTDavixIsAPieceOfShit) {
         gEnv->SetValue("Davix.GSI.UserCert", "/afs/cern.ch/user/p/pjurgiel/.globus/copy/usercert.pem");
         gEnv->SetValue("Davix.GSI.UserKey", "/afs/cern.ch/user/p/pjurgiel/.globus/copy/userkey_nopass.pem");

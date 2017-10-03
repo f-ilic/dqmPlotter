@@ -1,7 +1,7 @@
-#include "FileTable.h"
+#include "../include/FileTable.h"
 
-R__LOAD_LIBRARY(lib/Configuration_cpp.so)
-#include "Configuration.h"
+// R__LOAD_LIBRARY(lib/Configuration_cpp.so)
+#include "../include/Configuration.h"
 
 string FileTable::GetPathFromName(string name) {
     return table[name];

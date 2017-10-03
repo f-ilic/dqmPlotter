@@ -1,7 +1,7 @@
 
 # DO NOT DELETE
 
-./TopMenu_cpp.so: TopMenu.h Configuration.h
+./TopMenu_cpp.so: ../include/TopMenu.h ../include/Configuration.h
 ./TopMenu_cpp.so: /cvmfs/cms.cern.ch/slc6_amd64_gcc630/external/gcc/6.3.0/include/c++/6.3.0/fstream
 ./TopMenu_cpp.so: /cvmfs/cms.cern.ch/slc6_amd64_gcc630/external/gcc/6.3.0/include/c++/6.3.0/istream
 ./TopMenu_cpp.so: /cvmfs/cms.cern.ch/slc6_amd64_gcc630/external/gcc/6.3.0/include/c++/6.3.0/ios

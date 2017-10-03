@@ -1,4 +1,11 @@
-#include "FileViewer.cpp"
+#ifndef FILETABLE__H_
+#define FILETABLE__H_ 
+
+#include "TGListBox.h"
+
+#include "../include/FileViewer.h"
+
+#include <set>
 
 class TGListBox;
 
@@ -21,3 +28,4 @@ public:
 private:
     map<string, string> table;          // key=name, value=path
 };
+#endif

@@ -1,9 +1,11 @@
+R__LOAD_LIBRARY(lib/Browser_cpp.so)
+R__LOAD_LIBRARY(lib/FileViewer_cpp.so)
+R__LOAD_LIBRARY(lib/FileTable_cpp.so)
 R__LOAD_LIBRARY(lib/TopMenu_cpp.so)
 R__LOAD_LIBRARY(lib/Configuration_cpp.so)
 
-
-#include "Browser.cpp"
-#include "TopMenu.h"
+#include "include/Browser.h"
+#include "include/TopMenu.h"
 
 const string g_libraries[] = {"TopMenu.cpp", "Configuration.cpp"};
 

@@ -1,4 +1,4 @@
-#include "Browser.h"
+#include "../include/Browser.h"
 
 Browser::Browser() {
     table.FillFromFile("./rootfiles.txt");
@@ -70,7 +70,7 @@ void Browser::SelectFiles() {
         string obj_name = obj->GetTitle();
         string val = table.GetPathFromName(obj_name);
         cout << "found value " << val << endl;
-        selected_files.AddEntry(obj_name, "./f1.root"); // val goes here if in real use
+        selected_files.AddEntry(obj_name, val); // val goes here if in real use
     }
 //    selected_files.PrintDebug();
     selected_files.DisplayInTreeView(file_view);
