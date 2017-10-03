@@ -1,7 +1,29 @@
+R__LOAD_LIBRARY(lib/TopMenu_cpp.so)
+R__LOAD_LIBRARY(lib/Configuration_cpp.so)
+
+
 #include "Browser.cpp"
-#include "TopMenu.cpp"
+#include "TopMenu.h"
+
+const string g_libraries[] = {"TopMenu.cpp", "Configuration.cpp"};
+
+void BuildLibraries()
+{
+    for (const string& s : g_libraries)
+    {
+        cout << "Building: " << s << endl;
+        gROOT->ProcessLine((string(".L ") + s + "++").c_str());
+    }
+}
 
 void dqmPlotter() {
+  
+    // TASK 0: BUILD LIBS
+    // // BuildLibraries();
+    
+    // gROOT->ProcessLine(".L TopMenu.cpp++");
+    // gSystem->Load("TopMenu_cpp.so");
+  
     int width = 400;
     int height = 800;
     

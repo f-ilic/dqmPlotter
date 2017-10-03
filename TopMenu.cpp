@@ -1,5 +1,9 @@
 #include "TopMenu.h"
 
+// #ifndef __CINT__
+// ClassImp(Menu);
+// #endif
+
 void Menu::OpenDialog(Int_t menu_id) {
     cout << "[ OK ] Open File Dialog" << endl;
     TGFileInfo file_info_;
@@ -69,12 +73,12 @@ void Menu::UpdateIndex(){
                 Configuration::GetConfiguration().GetValue(Configuration::USERPUBLICKEYPATH);
 
         cout << "Running: " << cmd << endl;
-        int res = system(cmd.c_str());
+        // int res = system(cmd.c_str());
 
-        cout << "Exit code: " << res << endl;
-        if (res == 0) {
-            cout << "Database updated successfully" << endl;
-            // Reload the list of files now...
-        }
+        // cout << "Exit code: " << res << endl;
+        // if (res == 0) {
+            // cout << "Database updated successfully" << endl;
+            // // Reload the list of files now...
+        // }
     }
 }

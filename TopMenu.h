@@ -1,7 +1,19 @@
 #ifndef TOPMENU__H_
 #define TOPMENU__H_
 
-#include "Configuration.cpp"
+// R__LOAD_LIBRARY(lib/Configuration_cpp.so)
+#include "Configuration.h"
+
+#include "TApplication.h"
+#include "TSystem.h"
+#include "TGFrame.h"
+#include "TGMenu.h"
+#include "TGFileDialog.h"
+#include <iostream>
+
+// #pragma link C all globals
+extern TSystem* gSystem;
+extern TApplication* gApplication;
 
 class Menu {
 public:
@@ -27,6 +39,7 @@ private:
         M_UPDATE_INDEX,
         M_FILE_EXIT
     };
+// ClassDef(Menu,1);
 };
 
 #endif
