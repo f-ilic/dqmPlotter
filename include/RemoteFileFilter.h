@@ -7,6 +7,7 @@
 
 
 #include "../include/FileTable.h"
+#include "../include/Configuration.h"
 #include <iostream>
 #include <map>
 
@@ -19,7 +20,7 @@ public:
     void ApplyFilter();
 
     void FillFromFile(string path_to_file_to_load);
-    set<string> GetUniqueModulesFromFile(string filepath);
+    void FillModuleFilters(const string& filepath) ;
 
 //signal: INTERFACE
     void FilesSelected(map<string*, string*>*); //*SIGNAL*

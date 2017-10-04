@@ -3,33 +3,16 @@ R__LOAD_LIBRARY(lib/FileTable_cpp.so)
 R__LOAD_LIBRARY(lib/RemoteFileFilter_cpp.so)
 R__LOAD_LIBRARY(lib/FileViewer_cpp.so)
 R__LOAD_LIBRARY(lib/Configuration_cpp.so)
-R__LOAD_LIBRARY(lib/TopMenu_cpp.so)
+R__LOAD_LIBRARY(lib/MenuBar_cpp.so)
 
 
 #include "include/Browser.h"
-#include "include/TopMenu.h"
-
-const string g_libraries[] = {"TopMenu.cpp", "Configuration.cpp"};
-
-void BuildLibraries()
-{
-    for (const string& s : g_libraries)
-    {
-        cout << "Building: " << s << endl;
-        gROOT->ProcessLine((string(".L ") + s + "++").c_str());
-    }
-}
+#include "include/MenuBar.h"
 
 void dqmPlotter() {
   
-    // TASK 0: BUILD LIBS
-    // // BuildLibraries();
-    
-    // gROOT->ProcessLine(".L TopMenu.cpp++");
-    // gSystem->Load("TopMenu_cpp.so");
-  
-    int width = 400;
-    int height = 800;
+    int width = 1000;
+    int height = 600;
     
     // FIRST OF ALL: LOAD CONFIGURATION DATA
     Configuration::GetConfiguration("DATA/con.fig");
@@ -40,7 +23,7 @@ void dqmPlotter() {
 
     TGVerticalFrame* left = new TGVerticalFrame(main_frame);
 
-    TopMenu*  menu = new TopMenu();
+    MenuBar*  menu = new MenuBar();
     Browser* browser = new Browser();
 
     menu->DrawInFrame(main_frame);
@@ -60,7 +43,7 @@ class DQMPlotter {
 public:
 
 private:
-    TopMenu        menu;
+    MenuBar        menu;
     Browser     browser;
 
-}
+};
