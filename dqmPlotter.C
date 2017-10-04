@@ -11,8 +11,8 @@ R__LOAD_LIBRARY(lib/MenuBar_cpp.so)
 
 void dqmPlotter() {
   
-    int width = 1000;
-    int height = 600;
+    int width = 400;
+    int height = 1000;
     
     // FIRST OF ALL: LOAD CONFIGURATION DATA
     Configuration::GetConfiguration("DATA/con.fig");
@@ -24,6 +24,7 @@ void dqmPlotter() {
     TGVerticalFrame* left = new TGVerticalFrame(main_frame);
 
     MenuBar*  menu = new MenuBar();
+
     Browser* browser = new Browser();
 
     menu->DrawInFrame(main_frame);
@@ -36,6 +37,9 @@ void dqmPlotter() {
 
     main_frame->Layout();
     main_frame->MoveResize(100, 100, width, height);
+    
+    // MENU -> BROWSER CONNECTION
+    menu->Connect("UpdateIndex(void)", "Browser", browser, "UpdateLists(void)");
 }
 
 

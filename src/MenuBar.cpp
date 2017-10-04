@@ -41,7 +41,7 @@ void MenuBar::DrawInFrame(TGMainFrame *main_frame) {
 
     menu_bar->AddPopup("File Browser", popup_menu, new TGLayoutHints(kLHintsLeft, 0, 4, 0, 0));
     main_frame->AddFrame(menu_bar, new TGLayoutHints(kLHintsLeft ,2,2,2,2));
-    popup_menu->Connect("Activated(Int_t)", "Menu", this, "HandleMenu(Int_t)");
+    popup_menu->Connect("Activated(Int_t)", "TopMenu", this, "HandleMenu(Int_t)");
 }
 
 void MenuBar::SetCertificatePath(string path){
@@ -74,7 +74,8 @@ void MenuBar::UpdateIndex(){
         cout << "Exit code: " << res << endl;
         if (res == 0) {
             cout << "Database updated successfully" << endl;
-            // Reload the list of files now...
+            
+            Emit("UpdateIndex(void)");
         }
     }
 }

@@ -20,7 +20,8 @@ bool FileViewer::IsFileOpen(string s) {
 }
 
 void FileViewer::DrawInFrame(TGCompositeFrame* main_frame){
-    TGVerticalFrame* top_frame = new TGVerticalFrame(main_frame);
+    TGVerticalFrame* top_frame      = new TGVerticalFrame(main_frame);
+    TGHorizontalFrame* button_frame = new TGHorizontalFrame(top_frame);
 
     // canvas widget
     file_tree = new TGCanvas(top_frame,100,100);
@@ -33,15 +34,17 @@ void FileViewer::DrawInFrame(TGCompositeFrame* main_frame){
     list_tree->SetLayoutManager(new TGHorizontalLayout(list_tree));
     file_tree->SetContainer(list_tree);
 
-    remove_item_button = new TGTextButton(top_frame, "Remove Selected");
-    remove_all_button = new TGTextButton(top_frame, "Remove All");
+    remove_item_button = new TGTextButton(button_frame, "Remove Selected");
+    remove_all_button = new TGTextButton(button_frame, "Remove All");
+
+    button_frame->AddFrame(remove_item_button, new TGLayoutHints(kLHintsExpandX, 2, 2, 2, 2));
+    button_frame->AddFrame(remove_all_button, new TGLayoutHints(kLHintsExpandX, 2, 2, 2, 2));
 
     top_frame->AddFrame(file_tree, new TGLayoutHints(kLHintsExpandX | kLHintsExpandY, 2, 2, 2, 2));
-    top_frame->AddFrame(remove_all_button, new TGLayoutHints(kLHintsExpandX, 2, 2, 2, 2));
-    top_frame->AddFrame(remove_item_button, new TGLayoutHints(kLHintsExpandX, 2, 2, 2, 2));
+    top_frame->AddFrame(button_frame, new TGLayoutHints(kLHintsExpandX, 2, 2, 2, 2));
 
-    remove_all_button->Connect("Clicked()", "FileViewer", this, "RemoveAll()");
     remove_item_button->Connect("Clicked()", "FileViewer", this, "RemoveSelectedItem()");
+    remove_all_button->Connect("Clicked()", "FileViewer", this, "RemoveAll()");
 
     main_frame->AddFrame(top_frame, new TGLayoutHints(kLHintsExpandX | kLHintsExpandY, 2, 2, 2, 2));
 }

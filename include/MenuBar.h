@@ -9,13 +9,17 @@
 #include "TGFrame.h"
 #include "TGMenu.h"
 #include "TGFileDialog.h"
+#include "RQ_OBJECT.h"
+
 #include <iostream>
 
 // #pragma link C all globals
 extern TSystem* gSystem;
 extern TApplication* gApplication;
 
+
 class MenuBar {
+    RQ_OBJECT("MenuBar")
 public:
     MenuBar(){
         app_path = gSystem->pwd();
@@ -29,9 +33,9 @@ public:
     void UpdateIndex();
     void OpenDialog(Int_t menu_id);
 
-public:  
+public:
     string app_path{""};
-    
+
 private:
     enum EMyMessageTypes {
         M_USER_CERT,
@@ -39,7 +43,6 @@ private:
         M_UPDATE_INDEX,
         M_FILE_EXIT
     };
-// ClassDef(Menu,1);
 };
 
 #endif

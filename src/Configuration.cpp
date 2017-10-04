@@ -1,7 +1,5 @@
 #include "../include/Configuration.h"
 
-// ClassImp(Configuration)
-
 void Configuration::LoadConfiguration()
 {
   std::ifstream file(config_path);
@@ -30,11 +28,3 @@ ostream& operator<< (ostream& stream, const Configuration& config)
   
   return stream;
 }
-
-// void Configuration(){
-  // cout << Configuration::GetConfiguration();
-  // cout << "$$$$$$$$$$$$$$$$$$$$$$" << endl;
-  
-  // Configuration::GetConfiguration().UpdateKey(Configuration::USERCERTPATH, "wtf");
-  // cout << Configuration::GetConfiguration().GetValue(Configuration::USERCERTPATH) << endl;
-// }

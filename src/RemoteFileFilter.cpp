@@ -19,21 +19,18 @@ void RemoteFileFilter::DrawInFrame(TGCompositeFrame* mf) {
     search_frame->AddFrame(applyfilter_button);
 
     available_files_box = new TGListBox(top_frame);
-    selectfiles_button = new TGTextButton(top_frame, "Choose selected file(s)");
 
     top_frame->AddFrame(search_frame, new TGLayoutHints(kLHintsExpandX, 2, 2, 2, 2));
     top_frame->AddFrame(available_files_box, new TGLayoutHints(kLHintsExpandX | kLHintsExpandY, 2, 2, 2, 2));
-    top_frame->AddFrame(selectfiles_button, new TGLayoutHints(kLHintsExpandX, 2, 2, 2, 2));
 
     FillModuleFilters(Configuration::GetConfiguration().GetValue(Configuration::DATABASEFILTERSPATH));
 
     module_dropdown->Resize(200, 20);
     module_dropdown->Select(0);
 
-    available_files_box->SetMultipleSelections(true);
     applyfilter_button->Connect("Clicked()", "RemoteFileFilter", this, "ApplyFilter()");
 
-    selectfiles_button->Connect("Clicked()", "RemoteFileFilter", this, "SelectFiles()");
+    available_files_box->Connect("DoubleClicked(Int_t)", "RemoteFileFilter", this, "SelectFiles()");
     DisplayInListBox(this->table);
 
     selection_in_box = new TList;
@@ -53,8 +50,12 @@ void RemoteFileFilter::ApplyFilter() {
     DisplayInListBox(result);
 }
 
-void RemoteFileFilter::FillFromFile(string path_to_file_to_load) {
-    std::ifstream in(path_to_file_to_load);
+void RemoteFileFilter::FillFromFile(const string& filepath, bool cleanup) {
+  
+    if (cleanup)
+        this->table.CleanEntries();
+  
+    std::ifstream in(filepath);
     char str[255];
 
     string filenamepath, displayname;
@@ -74,34 +75,32 @@ void RemoteFileFilter::FillFromFile(string path_to_file_to_load) {
 
 
 void RemoteFileFilter::SelectFiles() {
-    selection_in_box->Clear();
-    available_files_box->GetSelectedEntries(selection_in_box);
-//    selection_in_box->ls();
+    TGLBEntry* elem = available_files_box->GetSelectedEntry();
 
+    if(!elem)
+        return;
 
-    for(const auto&& obj: *selection_in_box) {
-        string obj_name = obj->GetTitle();
-        string val = table.GetPathFromName(obj_name);
+    // lord have mercy on my soul...
+    string* obj_name = new string(elem->GetTitle());
+    string* obj_path = new string("./f1.root"); //new string(table.GetPathFromName(*obj_name));
 
-//        string* path =        new string(val);
-        string* path =        new string("./f1.root");
-        string* displayname = new string(obj_name);
-        map<string*, string*>* args = new map<string*, string*>;
-        (*args)[path] = displayname;
+    map<string*, string*>* args = new map<string*, string*>; // forget about it.
+    (*args)[obj_path] = obj_name;
 
-        Emit("FilesSelected(map<string*, string*>*)", args);
-    }
+    Emit("FilesSelected(map<string*, string*>*)", args);
 }
 
-void RemoteFileFilter::FillModuleFilters(const string& filepath) {
+void RemoteFileFilter::FillModuleFilters(const string& filepath, bool updateMode) {
     std::ifstream file(filepath);
     string line;
-    int j=1;
+    int j = ((updateMode) ? module_dropdown->GetNumberOfEntries() + 1 : 1);
     
     while(std::getline(file, line))
     {
-        if (line.length() != 0) 
-            module_dropdown->AddEntry(line.c_str(), j++);
+        if (line.length() != 0) {
+            if (!updateMode || (updateMode && !module_dropdown->FindEntry(line.c_str())))
+                module_dropdown->AddEntry(line.c_str(), j++);
+        }        
     }
     
     file.close();
