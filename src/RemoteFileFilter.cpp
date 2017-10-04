@@ -3,7 +3,7 @@
 #include <iostream>
 
 RemoteFileFilter::RemoteFileFilter() {
-    FillFromFile("./rootfiles.txt");
+    FillFromFile(Configuration::GetConfiguration().GetValue(Configuration::DATABASEPATH));
 }
 
 void RemoteFileFilter::DrawInFrame(TGCompositeFrame* mf) {
@@ -25,12 +25,7 @@ void RemoteFileFilter::DrawInFrame(TGCompositeFrame* mf) {
     top_frame->AddFrame(available_files_box, new TGLayoutHints(kLHintsExpandX | kLHintsExpandY, 2, 2, 2, 2));
     top_frame->AddFrame(selectfiles_button, new TGLayoutHints(kLHintsExpandX, 2, 2, 2, 2));
 
-    set<string> modules = GetUniqueModulesFromFile("./rootfiles.txt");
-
-    int j=1;
-    for(auto& e : modules) {
-        module_dropdown->AddEntry(e.c_str(), j++);
-    }
+    FillModuleFilters(Configuration::GetConfiguration().GetValue(Configuration::DATABASEFILTERSPATH));
 
     module_dropdown->Resize(200, 20);
     module_dropdown->Select(0);
@@ -95,30 +90,18 @@ void RemoteFileFilter::SelectFiles() {
     Emit("FilesSelected(int)", selected_files.GetMap().size());
 }
 
-set<string> RemoteFileFilter::GetUniqueModulesFromFile(string filepath) {
-    set<string> ret;
-    std::ifstream in(filepath);
-
-    char str[255];
-
-    string filename;
-    string modulename;
-
-    while(in) {
-        in.getline(str, 255);  // delim defaults to '\n'
-        filename=string(str);
-        int beginIdx = filename.rfind("/");
-        filename = filename.substr(beginIdx + 1);
-
-        // TODO: something fishy here, "" entry is added
-        if(filename.compare("")) {
-            filename = filename.substr(10, filename.size());
-            modulename = filename.substr(0, filename.find("_"));
-            ret.insert(modulename);
-        }
+void RemoteFileFilter::FillModuleFilters(const string& filepath) {
+    std::ifstream file(filepath);
+    string line;
+    int j=1;
+    
+    while(std::getline(file, line))
+    {
+        if (line.length() != 0) 
+            module_dropdown->AddEntry(line.c_str(), j++);
     }
-    in.close();
-    return ret;
+    
+    file.close();
 }
 
 void RemoteFileFilter::DisplayInListBox(FileTable ftable) {

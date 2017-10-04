@@ -7,6 +7,8 @@
 
 
 #include "../include/FileTable.h"
+#include "../include/Configuration.h"
+
 #include "TString.h"
 #include <iostream>
 
@@ -19,7 +21,7 @@ public:
     void ApplyFilter();
 
     void FillFromFile(string path_to_file_to_load);
-    set<string> GetUniqueModulesFromFile(string filepath);
+    void FillModuleFilters(const string& filepath) ;
 
     void PrintSomething() {
         cout << "Slot signal recieved" << endl;

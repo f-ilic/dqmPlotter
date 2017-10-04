@@ -122,6 +122,25 @@ def getMaxRun():
     
 ##################################################################################
     
+def getModuleFilters(paths, filename):
+  try:
+    filtersUnique = sorted(list(set([ p.split("/")[-1].split("_")[2] for p in paths if len(p)])))
+  except:
+    print("Improper structure of the list")
+    os.sys.exit(5)
+  
+  print(filtersUnique)
+  
+  try:
+    with open(filename, "w") as file:
+      for filter in filtersUnique:
+        file.write(filter + "\n")
+  except:
+    print("File <%s> access error" % (filename))
+    os.sys.exit(3)
+    
+##################################################################################
+    
 #1 STARTDIRs PATH or UPDATE
 #2 PATHTODB
 #3 PATHTOUSERCERT
@@ -130,6 +149,7 @@ def getMaxRun():
 hostURL = "https://cmsweb.cern.ch"
 startDirs = ["/dqm/online/data/browse/Original/"]
 pathToDb = "rootFiles.db"
+pathToDbFilters = pathToDb + ".filters"
 
 pathToGlobus = "/afs/cern.ch/user/p/pjurgiel/.globus/copy/"
 key_file = pathToGlobus + "userkey_nopass.pem"
@@ -156,6 +176,7 @@ for i in range(1, len(os.sys.argv)):
         os.sys.exit(3)                                      # EXIT CODE: 3
   elif i == 2:
     pathToDb = os.sys.argv[i]
+    pathToDbFilters = pathToDb + ".filters"
   elif i == 3:
     cert_file = os.sys.argv[i]
   elif i == 4:
@@ -192,6 +213,8 @@ if os.path.exists(pathToDb):
     with open(pathToDb, "a") as currentDB:
       for u in uniqueFilesToAppend:
         currentDB.write(u + "\n")
+    
+    getModuleFilters(currentDBContent + uniqueFilesToAppend, pathToDbFilters)
   except:
     print("File <%s> access error" % (pathToDb))
     os.sys.exit(3)                                      # EXIT CODE: 3
@@ -205,6 +228,8 @@ else:
     with open(pathToDb, "w") as currentDB:
       for f in filesToAppend:
         currentDB.write(hostURL + f + "\n")
+        
+    getModuleFilters([hostURL + f for f in filesToAppend], pathToDbFilters) 
   except:
     print("File <%s> access error" % (pathToDb))
     os.sys.exit(3)                                      # EXIT CODE: 3
