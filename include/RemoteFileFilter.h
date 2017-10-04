@@ -7,8 +7,8 @@
 
 
 #include "../include/FileTable.h"
-#include "TString.h"
 #include <iostream>
+#include <map>
 
 class RemoteFileFilter {
     RQ_OBJECT("RemoteFileFilter")
@@ -21,21 +21,11 @@ public:
     void FillFromFile(string path_to_file_to_load);
     set<string> GetUniqueModulesFromFile(string filepath);
 
-    void PrintSomething() {
-        cout << "Slot signal recieved" << endl;
-        cout << "Slot signal recieved" << endl;
-        cout << "Slot signal recieved" << endl;
-        cout << "Slot signal recieved" << endl;
-        cout << "Slot signal recieved" << endl;
-        cout << "Slot signal recieved" << endl;
-        cout << "Slot signal recieved" << endl;
-    }
-
 //signal: INTERFACE
-    void FilesSelected(int);
+    void FilesSelected(map<string*, string*>*); //*SIGNAL*
 
 //signal: INTERNAL
-    void SelectFiles();
+    void SelectFiles(); //*SIGNAL*
 
 private:
     void DisplayInListBox(FileTable ftable);

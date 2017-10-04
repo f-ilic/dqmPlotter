@@ -5,7 +5,7 @@ FileViewer::FileViewer() {
 
 void FileViewer::OpenFileInTreeView(string remote_file_path, string displayname) {
     TFile* remote_file = GetRemoteFile(remote_file_path);
-    if (remote_file && !IsOpened(displayname)) {
+    if (remote_file && !IsFileOpen(displayname)) {
         for (auto i: *(remote_file->GetListOfKeys())) {
             TGListTreeItem* item = list_tree->AddItem(nullptr, displayname.c_str());
             item->SetPictures(popen, pclose);
@@ -15,7 +15,7 @@ void FileViewer::OpenFileInTreeView(string remote_file_path, string displayname)
     }
 }
 
-bool FileViewer::IsOpened(string s) {
+bool FileViewer::IsFileOpen(string s) {
     return (open_files.find(s) != open_files.end());
 }
 
@@ -136,8 +136,8 @@ void FileViewer::TreeItemDoubleClicked(TGListTreeItem* item, int id) {
     cout << "FileViewer::TreeItemDoubleClicked: " << id << endl;
     TObject* object = tree_items_map[item]->ReadObj();
 
-    Double_t w = 600;
-    Double_t h = 600;
+    Double_t w = 300;
+    Double_t h = 400;
     TCanvas * c1 = new TCanvas("c", "c", w, h);
     c1->cd(1);
     ((TH1*)object)->Draw();
@@ -145,14 +145,13 @@ void FileViewer::TreeItemDoubleClicked(TGListTreeItem* item, int id) {
     AddChildren(item);
 }
 
-void FileViewer::PrintSomething(int t) {
-    cout << "# items selected:  " << t << endl;
-}
-
-
-void FileViewer::DisplayInTreeView(FileTable ftable){
-    this->RemoveAll();
-    for(auto& e : ftable.GetMap()) {
-        this->OpenFileInTreeView(e.second, e.first);
+void FileViewer::DisplayInTreeView(map<string*, string*> *t) {
+    for(auto& e : *t) {
+        cout << *(e.first) << endl;
+        cout << *(e.second) << endl;
+        OpenFileInTreeView(*(e.first), *(e.second));
+        delete (e.first);
+        delete (e.second);
     }
+    delete t;
 }

@@ -19,9 +19,9 @@
 
 #include <map>
 #include <iostream>
+#include <string>
 
 #include "../include/FileTable.h"
-#include "TString.h"
 
 extern TEnv* gEnv;
 
@@ -34,19 +34,22 @@ public:
     FileViewer();
     void DrawInFrame(TGCompositeFrame* main_frame);
     void TreeItemDoubleClicked(TGListTreeItem* item, int id);
-    void PrintSomething(int t);
+    void PrintSomething(map<string*, string*>*);
 
-// slot:
-    void DisplayInTreeView(FileTable ftable);
+//slot: INTERFACE
+    void DisplayInTreeView(map<string*, string*> *t); //*SLOT*
+
+//signal: INTERNAL
+    void RemoveSelectedItem(); //*SIGNAL*
+    void RemoveAll(); //*SIGNAL*
 
 private:
     TFile* GetRemoteFile(string filepath);
     void AddChildren(TGListTreeItem* parent);
     void OpenFileInTreeView(string remote_file_path, string displayname="");
     void PrintSelectedItem();
-    void RemoveSelectedItem();
-    void RemoveAll();
-    bool IsOpened(string s);
+
+    bool IsFileOpen(string s);
 
 
 

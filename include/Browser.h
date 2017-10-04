@@ -18,6 +18,5 @@ public:
 private:
     RemoteFileFilter   file_filter;
     FileViewer         file_view;
-    string             certificate_path;
 };
 #endif

@@ -83,16 +83,19 @@ void RemoteFileFilter::SelectFiles() {
     available_files_box->GetSelectedEntries(selection_in_box);
 //    selection_in_box->ls();
 
-    FileTable selected_files;
 
     for(const auto&& obj: *selection_in_box) {
         string obj_name = obj->GetTitle();
         string val = table.GetPathFromName(obj_name);
-//        cout << "found value " << val << endl;
-        selected_files.AddEntry(obj_name, val); // val goes here if in real use
-    }
 
-    Emit("FilesSelected(int)", selected_files.GetMap().size());
+//        string* path =        new string(val);
+        string* path =        new string("./f1.root");
+        string* displayname = new string(obj_name);
+        map<string*, string*>* args = new map<string*, string*>;
+        (*args)[path] = displayname;
+
+        Emit("FilesSelected(map<string*, string*>*)", args);
+    }
 }
 
 set<string> RemoteFileFilter::GetUniqueModulesFromFile(string filepath) {

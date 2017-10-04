@@ -38,7 +38,7 @@ void dqmPlotter() {
 
     main_frame->SetWindowName("DQM Plotter");
 
-    TGHorizontalFrame* left = new TGHorizontalFrame(main_frame);
+    TGVerticalFrame* left = new TGVerticalFrame(main_frame);
 
     Menu*  menu = new Menu();
     Browser* browser = new Browser();
