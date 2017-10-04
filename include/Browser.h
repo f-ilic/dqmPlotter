@@ -6,18 +6,19 @@
 
 #include "TGTextEntry.h"
 #include "TGComboBox.h"
+#include "RQ_OBJECT.h"
 #include <iostream>
 
 class Browser {
+    RQ_OBJECT("RemoteFileFilter")
 
 public:
     Browser();
-    void SetCertificatePath(string certpath);
     void DrawInFrame(TGCompositeFrame* mf);
+    void UpdateLists();
 
 private:
     RemoteFileFilter   file_filter;
     FileViewer         file_view;
-    string             certificate_path;
 };
 #endif

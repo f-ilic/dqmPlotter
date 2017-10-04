@@ -18,6 +18,8 @@ public:
     map<string, string> GetMap() { return table; }
 
     void PrintDebug();
+    
+    void CleanEntries() { this->table.clear(); }
 
 private:
     map<string, string> table;          // key=displayname, value=path

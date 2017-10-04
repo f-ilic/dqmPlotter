@@ -53,8 +53,12 @@ void RemoteFileFilter::ApplyFilter() {
     DisplayInListBox(result);
 }
 
-void RemoteFileFilter::FillFromFile(string path_to_file_to_load) {
-    std::ifstream in(path_to_file_to_load);
+void RemoteFileFilter::FillFromFile(const string& filepath, bool cleanup) {
+  
+    if (cleanup)
+        this->table.CleanEntries();
+  
+    std::ifstream in(filepath);
     char str[255];
 
     string filenamepath, displayname;
@@ -90,15 +94,17 @@ void RemoteFileFilter::SelectFiles() {
     Emit("FilesSelected(int)", selected_files.GetMap().size());
 }
 
-void RemoteFileFilter::FillModuleFilters(const string& filepath) {
+void RemoteFileFilter::FillModuleFilters(const string& filepath, bool updateMode) {
     std::ifstream file(filepath);
     string line;
-    int j=1;
+    int j = ((updateMode) ? module_dropdown->GetNumberOfEntries() + 1 : 1);
     
     while(std::getline(file, line))
     {
-        if (line.length() != 0) 
-            module_dropdown->AddEntry(line.c_str(), j++);
+        if (line.length() != 0) {
+            if (!updateMode || (updateMode && !module_dropdown->FindEntry(line.c_str())))
+                module_dropdown->AddEntry(line.c_str(), j++);
+        }        
     }
     
     file.close();

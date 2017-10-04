@@ -9,15 +9,18 @@
 #include "TGFrame.h"
 #include "TGMenu.h"
 #include "TGFileDialog.h"
+#include "RQ_OBJECT.h"
+
 #include <iostream>
 
 // #pragma link C all globals
 extern TSystem* gSystem;
 extern TApplication* gApplication;
 
-class Menu {
+class TopMenu {
+    RQ_OBJECT("TopMenu")
 public:
-    Menu(){
+    TopMenu(){
         app_path = gSystem->pwd();
         app_path += "/";
     }
@@ -39,7 +42,6 @@ private:
         M_UPDATE_INDEX,
         M_FILE_EXIT
     };
-// ClassDef(Menu,1);
 };
 
 #endif

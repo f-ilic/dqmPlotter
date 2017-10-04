@@ -20,8 +20,8 @@ public:
     void DrawInFrame(TGCompositeFrame* mf);
     void ApplyFilter();
 
-    void FillFromFile(string path_to_file_to_load);
-    void FillModuleFilters(const string& filepath) ;
+    void FillFromFile(const string& filepath, bool cleanup = false);
+    void FillModuleFilters(const string& filepath, bool updateMode = false) ;
 
     void PrintSomething() {
         cout << "Slot signal recieved" << endl;

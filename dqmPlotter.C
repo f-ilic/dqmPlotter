@@ -20,10 +20,9 @@ void dqmPlotter() {
     TGMainFrame* main_frame = new TGMainFrame(gClient->GetRoot(), width, height);
 
     main_frame->SetWindowName("DQM Plotter");
-
     TGHorizontalFrame* left = new TGHorizontalFrame(main_frame);
 
-    Menu*  menu = new Menu();
+    TopMenu*  menu = new TopMenu();    
     Browser* browser = new Browser();
 
     menu->DrawInFrame(main_frame);
@@ -36,6 +35,9 @@ void dqmPlotter() {
 
     main_frame->Layout();
     main_frame->MoveResize(100, 100, width, height);
+    
+    // MENU -> BROWSER CONNECTION
+    menu->Connect("UpdateIndex(void)", "Browser", browser, "UpdateLists(void)");
 }
 
 

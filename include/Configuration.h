@@ -54,8 +54,6 @@ class Configuration final
     
   private:
     void LoadConfiguration();
-    
-    // ClassDef(Configuration,1);
 };
 
 #endif
