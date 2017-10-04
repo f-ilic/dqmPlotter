@@ -14,30 +14,41 @@
 #include "TProfile2D.h"
 #include "TH2.h"
 #include "TH1.h"
+#include "RQ_OBJECT.h"
+
 
 #include <map>
 #include <iostream>
+
+#include "../include/FileTable.h"
+#include "TString.h"
 
 extern TEnv* gEnv;
 
 class TKey;
 
 class FileViewer {
+    RQ_OBJECT("FileViewer")
+
 public:
     FileViewer();
-    void TreeItemDoubleClicked(TGListTreeItem* item, int id);
-    void OpenFileInTreeView(string remote_file_path, string displayname="");
     void DrawInFrame(TGCompositeFrame* main_frame);
+    void TreeItemDoubleClicked(TGListTreeItem* item, int id);
+    void PrintSomething(int t);
 
+// slot:
+    void DisplayInTreeView(FileTable ftable);
+
+private:
+    TFile* GetRemoteFile(string filepath);
+    void AddChildren(TGListTreeItem* parent);
+    void OpenFileInTreeView(string remote_file_path, string displayname="");
     void PrintSelectedItem();
     void RemoveSelectedItem();
     void RemoveAll();
     bool IsOpened(string s);
 
 
-private:
-    TFile* GetRemoteFile(string filepath);
-    void AddChildren(TGListTreeItem* parent);
 
     TGCanvas*       file_tree;
     TGViewPort*     view_port;

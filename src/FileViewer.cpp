@@ -79,7 +79,7 @@ void FileViewer::RemoveAll() {
 }
 
 TFile* FileViewer::GetRemoteFile(string filepath) {
-#define ROOTDavixIsAPieceOfShit false
+#define ROOTDavixIsAPieceOfShit true
     if(!ROOTDavixIsAPieceOfShit) {
         gEnv->SetValue("Davix.GSI.UserCert", "/afs/cern.ch/user/p/pjurgiel/.globus/copy/usercert.pem");
         gEnv->SetValue("Davix.GSI.UserKey", "/afs/cern.ch/user/p/pjurgiel/.globus/copy/userkey_nopass.pem");
@@ -143,4 +143,16 @@ void FileViewer::TreeItemDoubleClicked(TGListTreeItem* item, int id) {
     ((TH1*)object)->Draw();
 
     AddChildren(item);
+}
+
+void FileViewer::PrintSomething(int t) {
+    cout << "# items selected:  " << t << endl;
+}
+
+
+void FileViewer::DisplayInTreeView(FileTable ftable){
+    this->RemoveAll();
+    for(auto& e : ftable.GetMap()) {
+        this->OpenFileInTreeView(e.second, e.first);
+    }
 }
