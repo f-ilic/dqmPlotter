@@ -15,9 +15,9 @@
 extern TSystem* gSystem;
 extern TApplication* gApplication;
 
-class Menu {
+class TopMenu {
 public:
-    Menu(){
+    TopMenu(){
         app_path = gSystem->pwd();
         app_path += "/";
     }

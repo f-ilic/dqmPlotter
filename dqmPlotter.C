@@ -40,7 +40,7 @@ void dqmPlotter() {
 
     TGVerticalFrame* left = new TGVerticalFrame(main_frame);
 
-    Menu*  menu = new Menu();
+    TopMenu*  menu = new TopMenu();
     Browser* browser = new Browser();
 
     menu->DrawInFrame(main_frame);
@@ -56,3 +56,11 @@ void dqmPlotter() {
 }
 
 
+class DQMPlotter {
+public:
+
+private:
+    TopMenu        menu;
+    Browser     browser;
+
+}
