@@ -3,7 +3,7 @@
 FileViewer::FileViewer() {
 }
 
-void FileViewer::OpenFileInTreeView(string remote_file_path, string displayname) {
+void FileViewer::OpenFileInTreeView(const string& remote_file_path, const string& displayname) {
     TFile* remote_file = GetRemoteFile(remote_file_path);
     if (remote_file && !IsFileOpen(displayname)) {
         for (auto i: *(remote_file->GetListOfKeys())) {
@@ -15,7 +15,7 @@ void FileViewer::OpenFileInTreeView(string remote_file_path, string displayname)
     }
 }
 
-bool FileViewer::IsFileOpen(string s) {
+bool FileViewer::IsFileOpen(const string& s) {
     return (open_files.find(s) != open_files.end());
 }
 
@@ -81,8 +81,8 @@ void FileViewer::RemoveAll() {
     tree_items_map.clear();
 }
 
-TFile* FileViewer::GetRemoteFile(string filepath) {
-#define ROOTDavixIsAPieceOfShit true
+TFile* FileViewer::GetRemoteFile(const string& filepath) {
+#define ROOTDavixIsAPieceOfShit false
     if(!ROOTDavixIsAPieceOfShit) {
         gEnv->SetValue("Davix.GSI.UserCert", "/afs/cern.ch/user/p/pjurgiel/.globus/copy/usercert.pem");
         gEnv->SetValue("Davix.GSI.UserKey", "/afs/cern.ch/user/p/pjurgiel/.globus/copy/userkey_nopass.pem");
@@ -97,15 +97,11 @@ void FileViewer::AddChildren(TGListTreeItem* parent) {
         TKey* currentKey = tree_items_map[parent];
 
         if (currentKey->IsFolder()) {
-            cout << "This is a folder!" << endl;
             TDirectory* dir = (TDirectory*)(currentKey->ReadObj());
-
             TList* currentDirKeys = dir->GetListOfKeys();
 
             for (TObject* obj : *currentDirKeys) {
                 TString name = obj->GetName();
-
-                cout << "Adding: " << name << endl;
                 TGListTreeItem* newItem;
 
                 if ((TKey*)obj->IsFolder()) {
@@ -114,16 +110,12 @@ void FileViewer::AddChildren(TGListTreeItem* parent) {
                     TObject* o = ((TKey*)obj)->ReadObj();
 
                     if (dynamic_cast<TProfile2D*>(o)) {    // FIND THE PROPER NAME FOR ICON
-                        cout << "Adding TProfile2D" << endl;
                         newItem = list_tree->AddItem(parent, name, ph1, ph1);
                     } else if (dynamic_cast<TProfile*>(o)) {  // FIND THE PROPER NAME FOR ICON
-                        cout << "Adding TProfile" << endl;
                         newItem = list_tree->AddItem(parent, name, ph1, ph1);
                     } else if (dynamic_cast<TH2*>(o)) {
-                        cout << "Adding TH2" << endl;
                         newItem = list_tree->AddItem(parent, name, ph2, ph2);
                     } else{ //let's assume everythng else is th1
-                        cout << "Adding TH1" << endl;
                         newItem = list_tree->AddItem(parent, name, ph1, ph1);
                     }
                 }
@@ -136,7 +128,7 @@ void FileViewer::AddChildren(TGListTreeItem* parent) {
 
 
 void FileViewer::TreeItemDoubleClicked(TGListTreeItem* item, int id) {
-    cout << "FileViewer::TreeItemDoubleClicked: " << id << endl;
+    // cout << "FileViewer::TreeItemDoubleClicked: " << id << endl;
     TObject* object = tree_items_map[item]->ReadObj();
 
     Double_t w = 300;

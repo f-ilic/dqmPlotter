@@ -25,8 +25,6 @@
 
 extern TEnv* gEnv;
 
-class TKey;
-
 class FileViewer {
     RQ_OBJECT("FileViewer")
 
@@ -44,14 +42,12 @@ public:
     void RemoveAll(); //*SIGNAL*
 
 private:
-    TFile* GetRemoteFile(string filepath);
+    TFile* GetRemoteFile(const string& filepath);
     void AddChildren(TGListTreeItem* parent);
-    void OpenFileInTreeView(string remote_file_path, string displayname="");
+    void OpenFileInTreeView(const string& remote_file_path, const string& displayname="");
     void PrintSelectedItem();
 
-    bool IsFileOpen(string s);
-
-
+    bool IsFileOpen(const string& s);
 
     TGCanvas*       file_tree;
     TGViewPort*     view_port;

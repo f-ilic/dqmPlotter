@@ -4,6 +4,8 @@
 #include <fstream>
 #include <map>
 
+#define CONFIGPATH "DATA/con.fig"
+
 class Configuration final
 {
   string config_path{};
@@ -34,7 +36,7 @@ class Configuration final
     
     friend ostream& operator<< (ostream& stream, const Configuration& config);
     
-    static Configuration& GetConfiguration(string config_path = "DATA/con.fig")
+    static Configuration& GetConfiguration(string config_path = CONFIGPATH)
     {
       static Configuration config(config_path);
       return config;
@@ -47,7 +49,7 @@ class Configuration final
     }
     
   protected:
-    Configuration(string config_path = "DATA/con.fig") : config_path(config_path)
+    Configuration(string config_path = CONFIGPATH) : config_path(config_path)
     {
       LoadConfiguration();
     }

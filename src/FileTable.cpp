@@ -1,25 +1,22 @@
 #include "../include/FileTable.h"
-#include <iostream>
 
-string FileTable::GetPathFromName(string name) {
-    return table[name];
-}
-
-void FileTable::AddEntry(string k, string v) {
-    table[k] = v;
-}
-
-void FileTable::PrintDebug() {
-    for(auto& e : table)
+void FileTable::PrintDebug() const{
+    for(const auto& e : table)
         cout << "key: " << e.first << "  value: " << e.second << endl;
 }
 
-FileTable FileTable::FilterNamesBy(vector<string> filters) {
+ostream& operator<< (ostream& stream, const FileTable& ft)
+{
+    ft.PrintDebug();
+    return stream;
+}
+
+FileTable FileTable::FilterNamesBy(const vector<string>& filters) {
     FileTable filtered;
 
-    for(auto& entry : table) {
+    for(const auto& entry : table) {
         bool is_ok = true;
-        for(auto& f : filters){
+        for(const auto& f : filters){
 
             if(entry.first.find(f) != string::npos) {
                 is_ok &= true;

@@ -33,9 +33,7 @@ void Browser::DrawInFrame(TGCompositeFrame *mf) {
 
 void Browser::UpdateLists()
 {
-  cout << "Hello world!" << endl;
-  cout << "sadsafssgergteg" << endl;
-  cout << "sadsafssgergteg" << endl;
-  // file_filter.FillFromFile(Configuration::GetConfiguration().GetValue(Configuration::DATABASEPATH), true);
-  // file_filter.FillModuleFilters(Configuration::GetConfiguration().GetValue(Configuration::DATABASEFILTERSPATH),true) ;
+  cout << "Browser::UpdateLists()" << endl;
+  file_filter.FillFromFile(Configuration::GetConfiguration().GetValue(Configuration::DATABASEPATH), true);
+  file_filter.FillModuleFilters(Configuration::GetConfiguration().GetValue(Configuration::DATABASEFILTERSPATH),true) ;
 }

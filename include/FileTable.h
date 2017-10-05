@@ -1,23 +1,23 @@
 #ifndef FILETABLE__H_
 #define FILETABLE__H_ 
 
-#include "TGListBox.h"
-#include <set>
+#include <iostream>
+#include <map>
 
-class TGListBox;
 
 class FileTable {
 public:
     FileTable() {}
-    void AddEntry(string k, string v);
-    FileTable FilterNamesBy(vector<string> filters);
+    void AddEntry(const string& k, const string& v) { table[k] = v; };
+    FileTable FilterNamesBy(const vector<string>& filters);
 
-    string GetPathFromName(string name);
-    string GetNameFromPath(string path);
+    const string& GetPathFromName(const string& name) { return table[name]; };
+    // string GetNameFromPath(string path);
 
-    map<string, string> GetMap() { return table; }
+    const map<string, string>& GetMap() const { return table; }
 
-    void PrintDebug();
+    void PrintDebug() const;
+    friend ostream& operator<< (ostream& stream, const FileTable& ft);
     
     void CleanEntries() { this->table.clear(); }
 
