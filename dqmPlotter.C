@@ -52,10 +52,11 @@ void dqmPlotter() {
     
     // MENU -> BROWSER CONNECTION
 
-    browser->Connect("SendFileToPlugin(TH1*)", "PreviewPlugin", preview_plugin, "Receive(TH1*)");
+    browser->Connect("OpenItemDoubleClicked(TH1*)", "PreviewPlugin", preview_plugin, "Receive(TH1*)");
     menu->Connect("IndexUpdated()", "Browser", browser, "UpdateLists()");
     
     // CREATE LOCAL DATA DIRECTORY
+    // TODO: check if exist first...
     string cmd = "mkdir " + Configuration::GetConfiguration().GetValue(Configuration::TMPDATADIRECTORY);
     system(cmd.c_str());
 }

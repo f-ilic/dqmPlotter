@@ -17,8 +17,8 @@ public:
     void DrawInFrame(TGCompositeFrame* mf);
     void UpdateLists();
 
-    void RecFile(TH1* t); //*SLOT*
-    void SendFileToPlugin(TH1* t); //*SIGNAL*
+    void ReceiveItem(TH1* t); //*SLOT*
+    void OpenItemDoubleClicked(TH1* t); //*SIGNAL*
 
 private:
     RemoteFileFilter   file_filter;

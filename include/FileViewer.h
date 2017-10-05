@@ -40,7 +40,7 @@ public:
     void RemoveSelectedItem(); //*SIGNAL*
     void RemoveAll(); //*SIGNAL*
 
-    void SendFile(TH1*); //*SIGNAL*
+    void ItemDoubleClicked(TH1*); //*SIGNAL*
 
 private:
     TFile* GetRemoteFile(const string& filepath);
