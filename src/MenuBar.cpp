@@ -41,7 +41,7 @@ void MenuBar::DrawInFrame(TGMainFrame *main_frame) {
     menu_bar = new TGMenuBar(main_frame, 35, 50, kHorizontalFrame);
     popup_menu = new TGPopupMenu(gClient->GetRoot());
     popup_menu->AddEntry("Set User Certificate", M_USER_CERT, 0, gClient->GetPicture("bld_open.png"));
-    popup_menu->AddEntry("Set User Public Key", M_USER_KEY, 0, gClient->GetPicture("bld_open.png"));
+    popup_menu->AddEntry("Set User Key", M_USER_KEY, 0, gClient->GetPicture("bld_open.png"));
     popup_menu->AddEntry("Update Index", M_UPDATE_INDEX, 0, gClient->GetPicture("refresh.png"));
     
     popup_menu->AddEntry("Work with local copies", M_WORK_WITH_LOCAL_COPIES, 0, nullptr);

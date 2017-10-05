@@ -4,6 +4,8 @@
 #include <fstream>
 #include <map>
 
+
+#define DEVMODE true
 #define CONFIGPATH "DATA/con.fig"
 
 class Configuration final

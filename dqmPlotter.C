@@ -6,39 +6,53 @@ R__LOAD_LIBRARY(lib/Configuration_cpp.so)
 R__LOAD_LIBRARY(lib/MenuBar_cpp.so)
 
 
+
 #include "include/Browser.h"
 #include "include/MenuBar.h"
+#include "include/IPlugin.h"
+#include "TGSplitter.h"
 
 void dqmPlotter() {
   
-    int width = 400;
+    int width = 1000;
     int height = 1000;
     
     // FIRST OF ALL: LOAD CONFIGURATION DATA
     Configuration::GetConfiguration("DATA/con.fig");
     
     TGMainFrame* main_frame = new TGMainFrame(gClient->GetRoot(), width, height);
-
     main_frame->SetWindowName("DQM Plotter");
 
-    TGVerticalFrame* left = new TGVerticalFrame(main_frame);
 
     MenuBar*  menu = new MenuBar();
-
     Browser* browser = new Browser();
+    PreviewPlugin* preview_plugin = new PreviewPlugin();
+
+    TGHorizontalFrame* containter_frame = new TGHorizontalFrame(main_frame);
+
+    TGVerticalFrame*  browser_area = new TGVerticalFrame(containter_frame, 300, 10, kFixedWidth | kRaisedFrame);
+    TGCompositeFrame* plugin_area  = new TGCompositeFrame(containter_frame, 700, 10, kRaisedFrame);
+    TGVSplitter* vsplitter = new TGVSplitter(containter_frame, 2, 2);
+    vsplitter->SetFrame(browser_area, kTRUE);
 
     menu->DrawInFrame(main_frame);
-    browser->DrawInFrame(left);
+    browser->DrawInFrame(browser_area);
+    preview_plugin->DrawInFrame(plugin_area);
 
-    main_frame->AddFrame(left, new TGLayoutHints(kLHintsExpandX | kLHintsExpandY, 2, 2, 2, 2));
+    containter_frame->AddFrame(browser_area, new TGLayoutHints(kLHintsExpandY));
+    containter_frame->AddFrame(vsplitter,  new TGLayoutHints(kLHintsExpandY, 5, 5, 5, 5));
+    containter_frame->AddFrame(plugin_area, new TGLayoutHints(kLHintsExpandX | kLHintsExpandY));
+
+    main_frame->AddFrame(containter_frame, new TGLayoutHints(kLHintsExpandX | kLHintsExpandY));
 
     main_frame->MapSubwindows();
     main_frame->MapWindow();
 
     main_frame->Layout();
-    main_frame->MoveResize(100, 100, width, height);
     
     // MENU -> BROWSER CONNECTION
+
+    browser->Connect("SendFileToPlugin(TH1*)", "PreviewPlugin", preview_plugin, "Receive(TH1*)");
     menu->Connect("IndexUpdated()", "Browser", browser, "UpdateLists()");
     
     // CREATE LOCAL DATA DIRECTORY

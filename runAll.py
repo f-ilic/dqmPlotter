@@ -1,4 +1,4 @@
-#!bin/python
+#!/usr/bin/env python
 
 from os import system, sys, chdir
 
@@ -10,3 +10,4 @@ chdir("src/")
 system("python BuildLibs.py " + filesToRebuild)
 chdir("../")
 system("root -l dqmPlotter.C")
+

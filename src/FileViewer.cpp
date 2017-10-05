@@ -1,4 +1,7 @@
 #include "../include/FileViewer.h"
+#include "../include/Configuration.h"
+
+#include "../include/Configuration.h"
 
 #include "../include/Configuration.h"
 
@@ -91,9 +94,9 @@ void FileViewer::RemoveAll() {
     tree_items_map.clear();
 }
 
+
 TFile* FileViewer::GetRemoteFile(const string& filepath) {
-#define ROOTDavixIsAPieceOfShit false
-    if(!ROOTDavixIsAPieceOfShit) {
+    if(DEVMODE) {
         gEnv->SetValue("Davix.GSI.UserCert", "/afs/cern.ch/user/p/pjurgiel/.globus/copy/usercert.pem");
         gEnv->SetValue("Davix.GSI.UserKey", "/afs/cern.ch/user/p/pjurgiel/.globus/copy/userkey_nopass.pem");
         gEnv->SetValue("Davix.Debug", 1);
@@ -150,16 +153,9 @@ void FileViewer::AddChildren(TGListTreeItem* parent) {
 
 
 void FileViewer::TreeItemDoubleClicked(TGListTreeItem* item, int id) {
-    // cout << "FileViewer::TreeItemDoubleClicked: " << id << endl;
     TObject* object = tree_items_map[item]->ReadObj();
-
-    Double_t w = 300;
-    Double_t h = 400;
-    TCanvas * c1 = new TCanvas("c", "c", w, h);
-    c1->cd(1);
-    ((TH1*)object)->Draw();
-
     AddChildren(item);
+    Emit("SendFile(TH1*)", (TH1*)object);
 }
 
 void FileViewer::DisplayInTreeView(map<string*, string*> *t) {

@@ -10,12 +10,15 @@
 #include <iostream>
 
 class Browser {
-    RQ_OBJECT("RemoteFileFilter")
+    RQ_OBJECT("Browser")
 
 public:
     Browser();
     void DrawInFrame(TGCompositeFrame* mf);
     void UpdateLists();
+
+    void RecFile(TH1* t); //*SLOT*
+    void SendFileToPlugin(TH1* t); //*SIGNAL*
 
 private:
     RemoteFileFilter   file_filter;

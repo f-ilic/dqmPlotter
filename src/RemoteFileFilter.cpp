@@ -1,4 +1,5 @@
 #include "../include/RemoteFileFilter.h"
+#include "../include/Configuration.h"
 #include <fstream>
 #include <iostream>
 
@@ -25,7 +26,7 @@ void RemoteFileFilter::DrawInFrame(TGCompositeFrame* mf) {
 
     FillModuleFilters(Configuration::GetConfiguration().GetValue(Configuration::DATABASEFILTERSPATH));
 
-    module_dropdown->Resize(200, 20);
+    module_dropdown->Resize(140, 20);
     module_dropdown->Select(0);
 
     applyfilter_button->Connect("Clicked()", "RemoteFileFilter", this, "ApplyFilter()");
@@ -86,7 +87,11 @@ void RemoteFileFilter::SelectFiles() {
     // https://mzucker.github.io/2016/08/03/miniray.html
     
     string* obj_name = new string(elem->GetTitle());
-    string* obj_path = new string(table.GetPathFromName(*obj_name)); //new string("./f1.root"); //
+
+    string* obj_path;
+    if(DEVMODE) obj_path = new string("./f1.root");
+    else        obj_path = new string(table.GetPathFromName(*obj_name));
+
 
     map<string*, string*>* args = new map<string*, string*>; // forget about it.
     (*args)[obj_path] = obj_name;
