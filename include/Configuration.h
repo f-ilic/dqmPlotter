@@ -4,6 +4,9 @@
 #include <fstream>
 #include <map>
 
+#define DEVMODE true
+
+
 class Configuration final
 {
   string config_path{};

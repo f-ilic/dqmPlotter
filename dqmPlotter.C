@@ -24,7 +24,6 @@ void dqmPlotter() {
     TGVerticalFrame* left = new TGVerticalFrame(main_frame);
 
     MenuBar*  menu = new MenuBar();
-
     Browser* browser = new Browser();
 
     menu->DrawInFrame(main_frame);

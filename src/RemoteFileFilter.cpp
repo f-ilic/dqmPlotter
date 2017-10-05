@@ -1,4 +1,5 @@
 #include "../include/RemoteFileFilter.h"
+#include "../include/Configuration.h"
 #include <fstream>
 #include <iostream>
 
@@ -82,7 +83,10 @@ void RemoteFileFilter::SelectFiles() {
 
     // lord have mercy on my soul...
     string* obj_name = new string(elem->GetTitle());
-    string* obj_path = new string("./f1.root"); //new string(table.GetPathFromName(*obj_name));
+
+    string* obj_path;
+    if(DEVMODE) obj_path = new string("./f1.root");
+    else        obj_path = new string(table.GetPathFromName(*obj_name));
 
     map<string*, string*>* args = new map<string*, string*>; // forget about it.
     (*args)[obj_path] = obj_name;

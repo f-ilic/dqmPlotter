@@ -35,13 +35,13 @@ void MenuBar::DrawInFrame(TGMainFrame *main_frame) {
     menu_bar = new TGMenuBar(main_frame, 35, 50, kHorizontalFrame);
     popup_menu = new TGPopupMenu(gClient->GetRoot());
     popup_menu->AddEntry("Set User Certificate", M_USER_CERT, 0, gClient->GetPicture("bld_open.png"));
-    popup_menu->AddEntry("Set User Public Key", M_USER_KEY, 0, gClient->GetPicture("bld_open.png"));
+    popup_menu->AddEntry("Set User Key", M_USER_KEY, 0, gClient->GetPicture("bld_open.png"));
     popup_menu->AddEntry("Update Index", M_UPDATE_INDEX, 0, gClient->GetPicture("refresh.png"));
     popup_menu->AddEntry("Exit", M_FILE_EXIT, 0, gClient->GetPicture("bld_exit.png"));
 
     menu_bar->AddPopup("File Browser", popup_menu, new TGLayoutHints(kLHintsLeft, 0, 4, 0, 0));
     main_frame->AddFrame(menu_bar, new TGLayoutHints(kLHintsLeft ,2,2,2,2));
-    popup_menu->Connect("Activated(Int_t)", "TopMenu", this, "HandleMenu(Int_t)");
+    popup_menu->Connect("Activated(Int_t)", "MenuBar", this, "HandleMenu(Int_t)");
 }
 
 void MenuBar::SetCertificatePath(string path){
