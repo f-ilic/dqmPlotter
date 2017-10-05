@@ -11,12 +11,14 @@ class Configuration final
   string config_path{};
   map<string, string> configMap;
   
-  const string configTitles[6] = {"UserCertPath",
+  const string configTitles[8] = {"UserCertPath",
                                  "UserPublicKeyPath",
                                  "UpdateDataBaseScriptPath",
                                  "DatabaseCreation",
                                  "DatabasePath",
-                                 "DatabaseFiltersPath"};
+                                 "DatabaseFiltersPath",
+                                 "TmpDataDirectory",
+                                 "LocalCopies"};
   
   public:    
   
@@ -26,7 +28,9 @@ class Configuration final
       UPDATEDATABASESCRIPTPATH,
       DATABASECREATION,
       DATABASEPATH,
-      DATABASEFILTERSPATH
+      DATABASEFILTERSPATH,
+      TMPDATADIRECTORY,
+      LOCALCOPIES
     };
     
     const string& GetValue(ConfigOpts opt)

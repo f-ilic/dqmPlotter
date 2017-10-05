@@ -39,7 +39,11 @@ void dqmPlotter() {
     main_frame->MoveResize(100, 100, width, height);
     
     // MENU -> BROWSER CONNECTION
-    menu->Connect("UpdateIndex(void)", "Browser", browser, "UpdateLists(void)");
+    menu->Connect("IndexUpdated()", "Browser", browser, "UpdateLists()");
+    
+    // CREATE LOCAL DATA DIRECTORY
+    string cmd = "mkdir " + Configuration::GetConfiguration().GetValue(Configuration::TMPDATADIRECTORY);
+    system(cmd.c_str());
 }
 
 

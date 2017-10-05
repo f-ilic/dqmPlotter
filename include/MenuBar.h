@@ -28,15 +28,23 @@ public:
     void SetPublicKeyPath(const string& path) const;
     void UpdateIndex();                             //*SIGNAL*
     string OpenDialog(Int_t menu_id) const;
+    
+    void TogglePopupEntry(Int_t menu_id);
+    
+    void IndexUpdated();      //*SIGNAL*
 
 public:
     const string app_path;
 
 private:
+    TGMenuBar*    menu_bar;
+    TGPopupMenu*  popup_menu;
+
     enum EMyMessageTypes {
         M_USER_CERT,
         M_USER_KEY,
         M_UPDATE_INDEX,
+        M_WORK_WITH_LOCAL_COPIES,
         M_FILE_EXIT
     };
 };
