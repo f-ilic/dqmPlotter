@@ -10,7 +10,7 @@ Browser::Browser() {
                         &file_view,
                         "DisplayInTreeView(map<string*, string*>*)");
 
-    file_view.Connect("SendFile(TH1*)", "Browser", this, "RecFile(TH1*)");
+    file_view.Connect("ItemDoubleClicked(TH1*)", "Browser", this, "ReceiveItem(TH1*)");
 }
 
 void Browser::DrawInFrame(TGCompositeFrame *mf) {
@@ -38,8 +38,7 @@ void Browser::UpdateLists() {
   file_filter.FillModuleFilters(Configuration::GetConfiguration().GetValue(Configuration::DATABASEFILTERSPATH),true) ;
 }
 
-void Browser::RecFile(TH1* t){
-    cout << "Browser::RecFile()" << endl;
-    Emit("SendFileToPlugin(TH1*)", t);
+void Browser::ReceiveItem(TH1* t){
+    Emit("OpenItemDoubleClicked(TH1*)", t);
 }
 

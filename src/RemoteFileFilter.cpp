@@ -40,11 +40,15 @@ void RemoteFileFilter::DrawInFrame(TGCompositeFrame* mf) {
 
 void RemoteFileFilter::ApplyFilter() {
     available_files_box->RemoveAll();
-    string module_str = module_dropdown->GetSelectedEntry()->GetTitle();
-    string query_str = search_box->GetText();
-
     vector<string> filters;
-    filters.push_back("_" + module_str + "_");
+
+    TGLBEntry* entry = module_dropdown->GetSelectedEntry();
+    if(entry) {
+        string module_str = entry->GetTitle();
+        filters.push_back("_" + module_str + "_");
+    }
+
+    string query_str = search_box->GetText();
     filters.push_back(query_str);
 
     FileTable result = table.FilterNamesBy(filters);

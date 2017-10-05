@@ -90,24 +90,26 @@ void FileViewer::RemoveAll() {
 
 
 TFile* FileViewer::GetRemoteFile(const string& filepath) {
-    if(DEVMODE) {
+    if(!DEVMODE) {
         gEnv->SetValue("Davix.GSI.UserCert", "/afs/cern.ch/user/p/pjurgiel/.globus/copy/usercert.pem");
         gEnv->SetValue("Davix.GSI.UserKey", "/afs/cern.ch/user/p/pjurgiel/.globus/copy/userkey_nopass.pem");
         gEnv->SetValue("Davix.Debug", 1);
     }
     
-    if (Configuration::GetConfiguration().GetValue(Configuration::LOCALCOPIES) == "ON")
-    {
-        string theName = filepath.substr(filepath.rfind("/") + 1);
-        string thePath = Configuration::GetConfiguration().GetValue(Configuration::TMPDATADIRECTORY) + theName;
+    string file_path_to_open = filepath;
+
+    if (Configuration::GetConfiguration().GetValue(Configuration::LOCALCOPIES) == "ON") {
+        string local_copy_name = filepath.substr(filepath.rfind("/") + 1);
+        string local_copy_path = Configuration::GetConfiguration().GetValue(Configuration::TMPDATADIRECTORY) + local_copy_name;
         
-        TFile* remoteFile = TFile::Open(filepath.c_str());
-        remoteFile->Cp(thePath.c_str());
-        remoteFile->Close();
+        TFile* remote_file = TFile::Open(filepath.c_str());
+        remote_file->Cp(local_copy_path.c_str());
+        remote_file->Close();
         
-        return TFile::Open(thePath.c_str());
+        file_path_to_open = local_copy_path;
     }
-    else return TFile::Open(filepath.c_str());
+
+    return TFile::Open(file_path_to_open.c_str());
 }
 
 void FileViewer::AddChildren(TGListTreeItem* parent) {
@@ -117,29 +119,29 @@ void FileViewer::AddChildren(TGListTreeItem* parent) {
 
         if (currentKey->IsFolder()) {
             TDirectory* dir = (TDirectory*)(currentKey->ReadObj());
-            TList* currentDirKeys = dir->GetListOfKeys();
+            TList* current_dir_keys = dir->GetListOfKeys();
 
-            for (TObject* obj : *currentDirKeys) {
+            for (TObject* obj : *current_dir_keys) {
                 TString name = obj->GetName();
-                TGListTreeItem* newItem;
+                TGListTreeItem* new_item;
 
                 if ((TKey*)obj->IsFolder()) {
-                    newItem = list_tree->AddItem(parent, name, popen, pclose, kFALSE);
+                    new_item = list_tree->AddItem(parent, name, popen, pclose, kFALSE);
                 } else {
                     TObject* o = ((TKey*)obj)->ReadObj();
 
                     if (dynamic_cast<TProfile2D*>(o)) {    // FIND THE PROPER NAME FOR ICON
-                        newItem = list_tree->AddItem(parent, name, ph1, ph1);
+                        new_item = list_tree->AddItem(parent, name, ph1, ph1);
                     } else if (dynamic_cast<TProfile*>(o)) {  // FIND THE PROPER NAME FOR ICON
-                        newItem = list_tree->AddItem(parent, name, ph1, ph1);
+                        new_item = list_tree->AddItem(parent, name, ph1, ph1);
                     } else if (dynamic_cast<TH2*>(o)) {
-                        newItem = list_tree->AddItem(parent, name, ph2, ph2);
+                        new_item = list_tree->AddItem(parent, name, ph2, ph2);
                     } else{ //let's assume everythng else is th1
-                        newItem = list_tree->AddItem(parent, name, ph1, ph1);
+                        new_item = list_tree->AddItem(parent, name, ph1, ph1);
                     }
                 }
-                newItem->CheckItem(kFALSE);
-                tree_items_map[newItem] = (TKey*)obj;
+                new_item->CheckItem(kFALSE);
+                tree_items_map[new_item] = (TKey*)obj;
             }
         }
     }
@@ -149,7 +151,7 @@ void FileViewer::AddChildren(TGListTreeItem* parent) {
 void FileViewer::TreeItemDoubleClicked(TGListTreeItem* item, int id) {
     TObject* object = tree_items_map[item]->ReadObj();
     AddChildren(item);
-    Emit("SendFile(TH1*)", (TH1*)object);
+    Emit("ItemDoubleClicked(TH1*)", (TH1*)object);
 }
 
 void FileViewer::DisplayInTreeView(map<string*, string*> *t) {
