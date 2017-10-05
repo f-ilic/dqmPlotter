@@ -82,11 +82,16 @@ void RemoteFileFilter::SelectFiles() {
         return;
 
     // lord have mercy on my soul...
+    
+    // <- really? so look at this:
+    // https://mzucker.github.io/2016/08/03/miniray.html
+    
     string* obj_name = new string(elem->GetTitle());
 
     string* obj_path;
     if(DEVMODE) obj_path = new string("./f1.root");
     else        obj_path = new string(table.GetPathFromName(*obj_name));
+
 
     map<string*, string*>* args = new map<string*, string*>; // forget about it.
     (*args)[obj_path] = obj_name;
@@ -110,10 +115,10 @@ void RemoteFileFilter::FillModuleFilters(const string& filepath, bool updateMode
     file.close();
 }
 
-void RemoteFileFilter::DisplayInListBox(FileTable ftable) {
+void RemoteFileFilter::DisplayInListBox(const FileTable& ftable) {
     available_files_box->RemoveAll();
     int i = 0;
-    for(auto& elem : ftable.GetMap()) {
+    for(const auto& elem : ftable.GetMap()) {
         available_files_box->AddEntry(elem.first.c_str(), i++);
     }
     available_files_box->Layout();

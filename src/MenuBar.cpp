@@ -1,22 +1,22 @@
 #include "../include/MenuBar.h"
 
-void MenuBar::OpenDialog(Int_t menu_id) {
-    cout << "[ OK ] Open File Dialog" << endl;
+string MenuBar::OpenDialog(Int_t menu_id) const {
     TGFileInfo file_info_;
     const char *filetypes[] = {"Certificate", "*.pem", 0, 0};
     file_info_.fFileTypes = filetypes;
     TGFileDialog* loadDialog = new TGFileDialog(gClient->GetDefaultRoot(), nullptr, kFDOpen, &file_info_);
-    (menu_id == M_USER_CERT) ? this->SetCertificatePath(file_info_.fFilename) : this->SetPublicKeyPath(file_info_.fFilename);
+    
+    return file_info_.fFilename;
 }
 
 void MenuBar::HandleMenu(Int_t menu_id) {
     switch (menu_id) {
     case M_USER_CERT: {
-        OpenDialog(menu_id);
+        SetCertificatePath(OpenDialog(menu_id));
         break;
     }
     case M_USER_KEY:{
-        OpenDialog(menu_id);
+        SetPublicKeyPath(OpenDialog(menu_id));
         break;
     }
     case M_UPDATE_INDEX:{
@@ -44,13 +44,13 @@ void MenuBar::DrawInFrame(TGMainFrame *main_frame) {
     popup_menu->Connect("Activated(Int_t)", "MenuBar", this, "HandleMenu(Int_t)");
 }
 
-void MenuBar::SetCertificatePath(string path){
+void MenuBar::SetCertificatePath(const string& path) const{
     if (path != ""){
         cout << "Setting certificate path to " << Configuration::GetConfiguration().UpdateKey(Configuration::USERCERTPATH, path) << endl;
     }
 }
 
-void MenuBar::SetPublicKeyPath(string path){
+void MenuBar::SetPublicKeyPath(const string& path) const{
     if (path != ""){
         cout << "Setting public key path to " << Configuration::GetConfiguration().UpdateKey(Configuration::USERPUBLICKEYPATH, path) << endl;
     }

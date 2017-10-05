@@ -29,7 +29,7 @@ public:
     void SelectFiles(); //*SIGNAL*
 
 private:
-    void DisplayInListBox(FileTable ftable);
+    void DisplayInListBox(const FileTable& ftable);
 
     TGVerticalFrame*   top_frame;
     TGHorizontalFrame* search_frame;

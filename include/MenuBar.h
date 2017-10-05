@@ -1,7 +1,6 @@
 #ifndef TOPMENU__H_
 #define TOPMENU__H_
 
-// R__LOAD_LIBRARY(lib/Configuration_cpp.so)
 #include "../include/Configuration.h"
 
 #include "TApplication.h"
@@ -21,20 +20,17 @@ extern TApplication* gApplication;
 class MenuBar {
     RQ_OBJECT("MenuBar")
 public:
-    MenuBar(){
-        app_path = gSystem->pwd();
-        app_path += "/";
-    }
+    MenuBar() : app_path(string(gSystem->pwd()) + "/") {}
 
     void HandleMenu(Int_t menu_id);
     void DrawInFrame(TGMainFrame* main_frame);
-    void SetCertificatePath(string path);
-    void SetPublicKeyPath(string path);
-    void UpdateIndex();
-    void OpenDialog(Int_t menu_id);
+    void SetCertificatePath(const string& path) const;
+    void SetPublicKeyPath(const string& path) const;
+    void UpdateIndex();                             //*SIGNAL*
+    string OpenDialog(Int_t menu_id) const;
 
 public:
-    string app_path{""};
+    const string app_path;
 
 private:
     enum EMyMessageTypes {
