@@ -1,19 +1,13 @@
 #include "../include/FileViewer.h"
 #include "../include/Configuration.h"
 
-#include "../include/Configuration.h"
-
-#include "../include/Configuration.h"
-
 FileViewer::FileViewer() {
 }
 
-void FileViewer::OpenFileInTreeView(const string& remote_file_path, const string& displayname) {
-    // TODO: PREVENT FROM LOADING IF THE KEY ALREADY EXISTS...
-  
+void FileViewer::OpenFileInTreeView(const string& remote_file_path, const string& displayname) { 
     if (list_tree->FindChildByName(nullptr, displayname.c_str()))
     {
-        cout << "The File has been already loaded! Skipping..." << endl;
+        cout << "The file has been already loaded! Skipping..." << endl;
         return;
     }
   

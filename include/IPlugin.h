@@ -1,3 +1,6 @@
+#ifndef IPLUGIN__H_
+#define IPLUGIN__H_
+
 #include "TGFrame.h"
 #include "TRootEmbeddedCanvas.h"
 
@@ -31,3 +34,5 @@ public:
 private:
     TRootEmbeddedCanvas* embedded_canvas;
 };
+
+#endif

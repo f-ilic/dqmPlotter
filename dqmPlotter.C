@@ -4,18 +4,19 @@ R__LOAD_LIBRARY(lib/RemoteFileFilter_cpp.so)
 R__LOAD_LIBRARY(lib/FileViewer_cpp.so)
 R__LOAD_LIBRARY(lib/Configuration_cpp.so)
 R__LOAD_LIBRARY(lib/MenuBar_cpp.so)
-
+R__LOAD_LIBRARY(lib/StatusBar_cpp.so)
 
 
 #include "include/Browser.h"
 #include "include/MenuBar.h"
+#include "include/StatusBar.h"
 #include "include/IPlugin.h"
 #include "TGSplitter.h"
 
 void dqmPlotter() {
   
     int width = 1000;
-    int height = 1000;
+    int height = 700;
     
     // FIRST OF ALL: LOAD CONFIGURATION DATA
     Configuration::GetConfiguration("DATA/con.fig");
@@ -44,6 +45,8 @@ void dqmPlotter() {
     containter_frame->AddFrame(plugin_area, new TGLayoutHints(kLHintsExpandX | kLHintsExpandY));
 
     main_frame->AddFrame(containter_frame, new TGLayoutHints(kLHintsExpandX | kLHintsExpandY));
+    
+    StatusBar::GetStatusBar(main_frame, width);
 
     main_frame->MapSubwindows();
     main_frame->MapWindow();
@@ -58,6 +61,8 @@ void dqmPlotter() {
     // CREATE LOCAL DATA DIRECTORY
     string cmd = "mkdir " + Configuration::GetConfiguration().GetValue(Configuration::TMPDATADIRECTORY);
     system(cmd.c_str());
+    
+    StatusBar::GetStatusBar().GetProgressBar()->SetBarColor("red");
 }
 
 
