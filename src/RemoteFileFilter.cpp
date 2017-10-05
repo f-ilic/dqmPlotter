@@ -26,7 +26,7 @@ void RemoteFileFilter::DrawInFrame(TGCompositeFrame* mf) {
 
     FillModuleFilters(Configuration::GetConfiguration().GetValue(Configuration::DATABASEFILTERSPATH));
 
-    module_dropdown->Resize(200, 20);
+    module_dropdown->Resize(140, 20);
     module_dropdown->Select(0);
 
     applyfilter_button->Connect("Clicked()", "RemoteFileFilter", this, "ApplyFilter()");

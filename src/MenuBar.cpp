@@ -23,24 +23,41 @@ void MenuBar::HandleMenu(Int_t menu_id) {
         this->UpdateIndex();
         break;
     }
-    case M_FILE_EXIT:
+    case M_WORK_WITH_LOCAL_COPIES:{
+        this->TogglePopupEntry(M_WORK_WITH_LOCAL_COPIES);
+        break;
+    }
+    case M_FILE_EXIT:{
+        string cmd = "rm -rf " + Configuration::GetConfiguration().GetValue(Configuration::TMPDATADIRECTORY) + "*";
+        system(cmd.c_str());
+        
         gApplication->Terminate(0);
         break;
+    }
     }
 }
 
 void MenuBar::DrawInFrame(TGMainFrame *main_frame) {
-    TGMenuBar*    menu_bar;
-    TGPopupMenu*  popup_menu;
     menu_bar = new TGMenuBar(main_frame, 35, 50, kHorizontalFrame);
     popup_menu = new TGPopupMenu(gClient->GetRoot());
     popup_menu->AddEntry("Set User Certificate", M_USER_CERT, 0, gClient->GetPicture("bld_open.png"));
     popup_menu->AddEntry("Set User Key", M_USER_KEY, 0, gClient->GetPicture("bld_open.png"));
     popup_menu->AddEntry("Update Index", M_UPDATE_INDEX, 0, gClient->GetPicture("refresh.png"));
+    
+    popup_menu->AddEntry("Work with local copies", M_WORK_WITH_LOCAL_COPIES, 0, nullptr);
+    
     popup_menu->AddEntry("Exit", M_FILE_EXIT, 0, gClient->GetPicture("bld_exit.png"));
+    
+    if (Configuration::GetConfiguration().GetValue(Configuration::LOCALCOPIES) == "ON"){
+        popup_menu->CheckEntry(M_WORK_WITH_LOCAL_COPIES);
+    }
+    
+    popup_menu->AddSeparator(popup_menu->GetEntry(M_WORK_WITH_LOCAL_COPIES));
+    popup_menu->AddSeparator(popup_menu->GetEntry(M_FILE_EXIT));
 
     menu_bar->AddPopup("File Browser", popup_menu, new TGLayoutHints(kLHintsLeft, 0, 4, 0, 0));
     main_frame->AddFrame(menu_bar, new TGLayoutHints(kLHintsLeft ,2,2,2,2));
+
     popup_menu->Connect("Activated(Int_t)", "MenuBar", this, "HandleMenu(Int_t)");
 }
 
@@ -75,7 +92,27 @@ void MenuBar::UpdateIndex(){
         if (res == 0) {
             cout << "Database updated successfully" << endl;
             
-            Emit("UpdateIndex(void)");
+            Emit("IndexUpdated()");
+        }
+    }
+}
+
+void MenuBar::TogglePopupEntry(Int_t menu_id){
+    if (this->popup_menu->IsEntryChecked(menu_id))
+    {
+        this->popup_menu->UnCheckEntry(menu_id);
+        
+        if (menu_id == M_WORK_WITH_LOCAL_COPIES)
+        {
+            Configuration::GetConfiguration().UpdateKey(Configuration::LOCALCOPIES, "OFF");
+        }
+        // GET(DOWNLOAD) ALLFILES SELECTED IN FILE VIEWER
+    } else {
+        this->popup_menu->CheckEntry(menu_id);
+        
+        if (menu_id == M_WORK_WITH_LOCAL_COPIES)
+        {
+            Configuration::GetConfiguration().UpdateKey(Configuration::LOCALCOPIES, "ON");
         }
     }
 }

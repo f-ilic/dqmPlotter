@@ -1,10 +1,20 @@
 #include "../include/FileViewer.h"
 #include "../include/Configuration.h"
 
+#include "../include/Configuration.h"
+
 FileViewer::FileViewer() {
 }
 
 void FileViewer::OpenFileInTreeView(const string& remote_file_path, const string& displayname) {
+    // TODO: PREVENT FROM LOADING IF THE KEY ALREADY EXISTS...
+  
+    if (list_tree->FindChildByName(nullptr, displayname.c_str()))
+    {
+        cout << "The File has been already loaded! Skipping..." << endl;
+        return;
+    }
+  
     TFile* remote_file = GetRemoteFile(remote_file_path);
     if (remote_file && !IsFileOpen(displayname)) {
         for (auto i: *(remote_file->GetListOfKeys())) {
@@ -89,7 +99,19 @@ TFile* FileViewer::GetRemoteFile(const string& filepath) {
         gEnv->SetValue("Davix.GSI.UserKey", "/afs/cern.ch/user/p/pjurgiel/.globus/copy/userkey_nopass.pem");
         gEnv->SetValue("Davix.Debug", 1);
     }
-    return TFile::Open(filepath.c_str());
+    
+    if (Configuration::GetConfiguration().GetValue(Configuration::LOCALCOPIES) == "ON")
+    {
+        string theName = filepath.substr(filepath.rfind("/") + 1);
+        string thePath = Configuration::GetConfiguration().GetValue(Configuration::TMPDATADIRECTORY) + theName;
+        
+        TFile* remoteFile = TFile::Open(filepath.c_str());
+        remoteFile->Cp(thePath.c_str());
+        remoteFile->Close();
+        
+        return TFile::Open(thePath.c_str());
+    }
+    else return TFile::Open(filepath.c_str());
 }
 
 void FileViewer::AddChildren(TGListTreeItem* parent) {
@@ -129,16 +151,9 @@ void FileViewer::AddChildren(TGListTreeItem* parent) {
 
 
 void FileViewer::TreeItemDoubleClicked(TGListTreeItem* item, int id) {
-    // cout << "FileViewer::TreeItemDoubleClicked: " << id << endl;
     TObject* object = tree_items_map[item]->ReadObj();
-
-    Double_t w = 300;
-    Double_t h = 400;
-    TCanvas * c1 = new TCanvas("c", "c", w, h);
-    c1->cd(1);
-    ((TH1*)object)->Draw();
-
     AddChildren(item);
+    Emit("SendFile(TH1*)", (TH1*)object);
 }
 
 void FileViewer::DisplayInTreeView(map<string*, string*> *t) {

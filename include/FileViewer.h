@@ -16,7 +16,6 @@
 #include "TH1.h"
 #include "RQ_OBJECT.h"
 
-
 #include <map>
 #include <iostream>
 #include <string>
@@ -40,6 +39,8 @@ public:
 //signal: INTERNAL
     void RemoveSelectedItem(); //*SIGNAL*
     void RemoveAll(); //*SIGNAL*
+
+    void SendFile(TH1*); //*SIGNAL*
 
 private:
     TFile* GetRemoteFile(const string& filepath);

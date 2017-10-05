@@ -5,3 +5,7 @@ UpdateDataBaseScriptPath = remoteROOT/readRemoteDirectories.py
 DatabaseCreation = DATA/toUpdate.txt
 DatabasePath = DATA/rootFiles.db
 DatabaseFiltersPath = DATA/rootFiles.db.filters
+
+TmpDataDirectory = DATA/tmp/
+
+LocalCopies = ON
