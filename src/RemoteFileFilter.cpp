@@ -110,8 +110,7 @@ void RemoteFileFilter::FillModuleFilters(const string& filepath, bool updateMode
     string line;
     int j = ((updateMode) ? module_dropdown->GetNumberOfEntries() + 1 : 1);
     
-    while(std::getline(file, line))
-    {
+    while(std::getline(file, line)) {
         if (line.length() != 0) {
             if (!updateMode || (updateMode && !module_dropdown->FindEntry(line.c_str())))
                 module_dropdown->AddEntry(line.c_str(), j++);
