@@ -27,7 +27,7 @@ void dqmPlotter() {
 
     MenuBar*  menu = new MenuBar();
     Browser* browser = new Browser();
-    PreviewPlugin* preview_plugin = new PreviewPlugin();
+    SuperimposePlugin* plugin = new SuperimposePlugin();
 
     TGHorizontalFrame* containter_frame = new TGHorizontalFrame(main_frame);
 
@@ -38,7 +38,7 @@ void dqmPlotter() {
 
     menu->DrawInFrame(main_frame);
     browser->DrawInFrame(browser_area);
-    preview_plugin->DrawInFrame(plugin_area);
+    plugin->DrawInFrame(plugin_area);
 
     containter_frame->AddFrame(browser_area, new TGLayoutHints(kLHintsExpandY));
     containter_frame->AddFrame(vsplitter,  new TGLayoutHints(kLHintsExpandY, 5, 5, 5, 5));
@@ -55,7 +55,8 @@ void dqmPlotter() {
     
     // MENU -> BROWSER CONNECTION
 
-    browser->Connect("OpenItemDoubleClicked(TH1*)", "PreviewPlugin", preview_plugin, "Receive(TH1*)");
+//    browser->Connect("OpenItemDoubleClicked(TH1*)", "PreviewPlugin", plugin, "Receive(TH1*)");
+    browser->Connect("OpenItemDoubleClicked(TH1*)", "SuperimposePlugin", plugin, "Receive(TH1*)");
     menu->Connect("IndexUpdated()", "Browser", browser, "UpdateLists()");
     
     // CREATE LOCAL DATA DIRECTORY

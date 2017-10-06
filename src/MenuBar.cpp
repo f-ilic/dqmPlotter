@@ -29,7 +29,10 @@ void MenuBar::HandleMenu(Int_t menu_id) {
     }
     case M_FILE_EXIT:{
         string cmd = "rm -rf " + Configuration::GetConfiguration().GetValue(Configuration::TMPDATADIRECTORY) + "*";
-        system(cmd.c_str());
+        if(system(cmd.c_str())) {
+            cout << "system(cmd) returned nullptr" << endl;
+            cout << " -- maybe bad" << endl;
+        }
         
         gApplication->Terminate(0);
         break;

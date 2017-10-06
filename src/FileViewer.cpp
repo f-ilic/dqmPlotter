@@ -88,7 +88,8 @@ void FileViewer::RemoveAll() {
     tree_items_map.clear();
 }
 
-
+//TODO: change signature to (const string& filepath, const string& displayname)
+//      so that you dont have to parse the filepath again.
 TFile* FileViewer::GetRemoteFile(const string& filepath) {
     if(!DEVMODE) {
         gEnv->SetValue("Davix.GSI.UserCert", "/afs/cern.ch/user/p/pjurgiel/.globus/copy/usercert.pem");
