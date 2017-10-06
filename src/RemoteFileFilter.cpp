@@ -73,7 +73,7 @@ void RemoteFileFilter::FillFromFile(const string& filepath, bool cleanup) {
         int beginIdx = filenamepath.rfind('/');
         displayname = filenamepath.substr(beginIdx + 1);
 
-        // TODO: something fishy here, "" entry is added
+        // BUG: something fishy here, "" entry is added; therefore removing ""
         if(displayname.compare(""))
             this->table.AddEntry(displayname, filenamepath);
     }

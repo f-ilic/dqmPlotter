@@ -158,7 +158,14 @@ void FileViewer::AddChildren(TGListTreeItem* parent) {
 void FileViewer::TreeItemDoubleClicked(TGListTreeItem* item, int id) {
     TObject* object = tree_items_map[item]->ReadObj();
     AddChildren(item);
-    Emit("ItemDoubleClicked(TH1*)", (TH1*)object);
+
+    //FIXME: this needs to emit signals based on object
+    // with the most general being ItemDoubleClicked
+    // but for exampole:
+    // -FolderDoubleClicked
+    // -FileDoubleClicked (maybe even th1/2/profile doubleclicked)
+    if(dynamic_cast<TH1*>(object))
+        Emit("ItemDoubleClicked(TH1*)", (TH1*)object);
 }
 
 void FileViewer::DisplayInTreeView(map<string*, string*> *t) {
