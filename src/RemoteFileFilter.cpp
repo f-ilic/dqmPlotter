@@ -56,7 +56,9 @@ void RemoteFileFilter::ApplyFilter() {
 }
 
 void RemoteFileFilter::FillFromFile(const string& filepath, bool cleanup) {
-  
+    cout << "RemoteFileFilter::FillFromFile()" << endl;
+    cout << filepath << endl;
+    
     if (cleanup)
         this->table.CleanEntries();
   

@@ -1,4 +1,5 @@
 #include "../include/MenuBar.h"
+#include "../include/StatusBar.h"
 
 string MenuBar::OpenDialog(Int_t menu_id) const {
     TGFileInfo file_info_;
@@ -63,13 +64,13 @@ void MenuBar::DrawInFrame(TGMainFrame *main_frame) {
 
 void MenuBar::SetCertificatePath(const string& path) const{
     if (path != ""){
-        cout << "Setting certificate path to " << Configuration::GetConfiguration().UpdateKey(Configuration::USERCERTPATH, path) << endl;
+        StatusBar::GetStatusBar().GetStatusBarControl()->SetText((string("Setting certificate path to: ") + path).c_str(), 0);
     }
 }
 
 void MenuBar::SetPublicKeyPath(const string& path) const{
-    if (path != ""){
-        cout << "Setting public key path to " << Configuration::GetConfiguration().UpdateKey(Configuration::USERPUBLICKEYPATH, path) << endl;
+    if (path != ""){       
+        StatusBar::GetStatusBar().GetStatusBarControl()->SetText((string("Setting public key path to: ") + path).c_str(), 0);
     }
 }
 
@@ -78,6 +79,9 @@ void MenuBar::UpdateIndex(){
         Configuration::GetConfiguration().GetValue(Configuration::USERPUBLICKEYPATH) == ""){
         cout << "Certificates not set: \n\t" << Configuration::GetConfiguration().GetValue(Configuration::USERCERTPATH) << "\n\t" 
                                              << Configuration::GetConfiguration().GetValue(Configuration::USERPUBLICKEYPATH) << endl;
+                                             
+        StatusBar::GetStatusBar().GetStatusBarControl()->SetText("Certificates not set", 0);
+
     } else {
         string cmd = "python " + app_path + Configuration::GetConfiguration().GetValue(Configuration::UPDATEDATABASESCRIPTPATH) + " " +
                 app_path + Configuration::GetConfiguration().GetValue(Configuration::DATABASECREATION) +    " " +
@@ -86,13 +90,17 @@ void MenuBar::UpdateIndex(){
                 Configuration::GetConfiguration().GetValue(Configuration::USERPUBLICKEYPATH);
 
         cout << "Running: " << cmd << endl;
+        StatusBar::GetStatusBar().GetStatusBarControl()->SetText("Running database update. Please wait...", 0);
+
         int res = system(cmd.c_str());
 
         cout << "Exit code: " << res << endl;
         if (res == 0) {
-            cout << "Database updated successfully" << endl;
+            StatusBar::GetStatusBar().GetStatusBarControl()->SetText("Database updated successfully.", 0);
             
             Emit("IndexUpdated()");
+        } else {
+            StatusBar::GetStatusBar().GetStatusBarControl()->SetText("Error. Database update not successful.", 0);
         }
     }
 }
@@ -106,7 +114,6 @@ void MenuBar::TogglePopupEntry(Int_t menu_id){
         {
             Configuration::GetConfiguration().UpdateKey(Configuration::LOCALCOPIES, "OFF");
         }
-        // GET(DOWNLOAD) ALLFILES SELECTED IN FILE VIEWER
     } else {
         this->popup_menu->CheckEntry(menu_id);
         

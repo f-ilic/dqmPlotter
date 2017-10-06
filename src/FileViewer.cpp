@@ -1,13 +1,14 @@
 #include "../include/FileViewer.h"
 #include "../include/Configuration.h"
+#include "../include/StatusBar.h"
 
 FileViewer::FileViewer() {
 }
 
 void FileViewer::OpenFileInTreeView(const string& remote_file_path, const string& displayname) { 
     if (list_tree->FindChildByName(nullptr, displayname.c_str()))
-    {
-        cout << "The file has been already loaded! Skipping..." << endl;
+    {        
+        StatusBar::GetStatusBar().GetStatusBarControl()->SetText("This dataset has been already loaded. Skipping...", 0);
         return;
     }
   
@@ -89,7 +90,7 @@ void FileViewer::RemoveAll() {
 }
 
 
-TFile* FileViewer::GetRemoteFile(const string& filepath) {
+TFile* FileViewer::GetRemoteFile(const string& filepath) {  
     if(!DEVMODE) {
         gEnv->SetValue("Davix.GSI.UserCert", "/afs/cern.ch/user/p/pjurgiel/.globus/copy/usercert.pem");
         gEnv->SetValue("Davix.GSI.UserKey", "/afs/cern.ch/user/p/pjurgiel/.globus/copy/userkey_nopass.pem");
@@ -99,6 +100,9 @@ TFile* FileViewer::GetRemoteFile(const string& filepath) {
     string file_path_to_open = filepath;
 
     if (Configuration::GetConfiguration().GetValue(Configuration::LOCALCOPIES) == "ON") {
+        TGStatusBar* statusBar = StatusBar::GetStatusBar().GetStatusBarControl();
+        statusBar->SetText("Downloading file to disk. This can take a while...", 0);
+      
         string local_copy_name = filepath.substr(filepath.rfind("/") + 1);
         string local_copy_path = Configuration::GetConfiguration().GetValue(Configuration::TMPDATADIRECTORY) + local_copy_name;
         
@@ -107,8 +111,10 @@ TFile* FileViewer::GetRemoteFile(const string& filepath) {
         remote_file->Close();
         
         file_path_to_open = local_copy_path;
+        
+        statusBar->SetText((string("File ") + filepath + " downloaded.").c_str(), 0);
     }
-
+    
     return TFile::Open(file_path_to_open.c_str());
 }
 

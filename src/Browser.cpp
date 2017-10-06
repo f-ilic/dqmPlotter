@@ -1,4 +1,5 @@
 #include "../include/Browser.h"
+#include "../include/StatusBar.h"
 
 #include <iostream>
 #include "TGSplitter.h"
@@ -33,12 +34,17 @@ void Browser::DrawInFrame(TGCompositeFrame *mf) {
 }
 
 void Browser::UpdateLists() {
-  cout << "Browser::UpdateLists()" << endl;
-  file_filter.FillFromFile(Configuration::GetConfiguration().GetValue(Configuration::DATABASEPATH), true);
-  file_filter.FillModuleFilters(Configuration::GetConfiguration().GetValue(Configuration::DATABASEFILTERSPATH),true) ;
+    StatusBar::GetStatusBar().GetStatusBarControl()->SetText("Updating GUI content. Please wait", 0);
+
+    file_filter.FillFromFile(Configuration::GetConfiguration().GetValue(Configuration::DATABASEPATH), true);
+    file_filter.FillModuleFilters(Configuration::GetConfiguration().GetValue(Configuration::DATABASEFILTERSPATH),true) ;
+    
+    StatusBar::GetStatusBar().GetStatusBarControl()->SetText("GUI content updated", 0);
+
 }
 
 void Browser::ReceiveItem(TH1* t){
+    cout << "Browser::ReceiveItem()" << endl;
     Emit("OpenItemDoubleClicked(TH1*)", t);
 }
 
