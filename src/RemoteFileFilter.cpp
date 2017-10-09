@@ -86,11 +86,6 @@ void RemoteFileFilter::SelectFiles() {
 
     if(!elem)
         return;
-
-    // lord have mercy on my soul...
-    
-    // <- really? so look at this:
-    // https://mzucker.github.io/2016/08/03/miniray.html
     
     string* obj_name = new string(elem->GetTitle());
 
@@ -98,8 +93,7 @@ void RemoteFileFilter::SelectFiles() {
     if(DEVMODE) obj_path = new string("./f1.root");
     else        obj_path = new string(table.GetPathFromName(*obj_name));
 
-
-    map<string*, string*>* args = new map<string*, string*>; // forget about it.
+    map<string*, string*>* args = new map<string*, string*>;
     (*args)[obj_path] = obj_name;
 
     Emit("FilesSelected(map<string*, string*>*)", args);

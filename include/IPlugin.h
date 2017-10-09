@@ -44,8 +44,16 @@ public:
     SuperimposePlugin() {}
 
     void Receive(TH1* t) override {
-        selection_obj.push_back(t);
-        selection_box->AddEntry(t->GetTitle(), selection_obj.size());
+        // dont allow duplicates in list:
+        for(auto& e : selected_objects) {
+            if (t->Compare(e.second) == 0)
+                return;
+        }
+
+        int num_selected = selected_objects.size();
+        selected_objects[num_selected] = t;
+
+        selection_box->AddEntry(t->GetTitle(), num_selected);
         selection_box->Layout();
 
         PreviewAll();
@@ -56,54 +64,46 @@ public:
 
 
         TGHorizontalFrame* preview_frame = new TGHorizontalFrame(frame);
-                    TGVerticalFrame* selection_frame = new TGVerticalFrame(preview_frame, 200, 250, kFixedWidth);
-                    TGVerticalFrame* selection_buttons_frame = new TGVerticalFrame(preview_frame);
-                        TGTextButton* remove_selected_item_button = new TGTextButton(selection_buttons_frame, "Remove Selected");
-                        TGTextButton* clear_button = new TGTextButton(selection_buttons_frame, "Clear All");
+            TGVerticalFrame* selection_frame = new TGVerticalFrame(preview_frame, 202, 250, kFixedWidth);
+            TGVerticalFrame* selection_buttons_frame = new TGVerticalFrame(preview_frame);
+                TGTextButton* remove_selected_item_button = new TGTextButton(selection_buttons_frame, "Remove Selected");
+                TGTextButton* clear_button = new TGTextButton(selection_buttons_frame, "Clear All");
 
         TGHorizontalFrame* superimpose_frame = new TGHorizontalFrame(frame);
+            TGVerticalFrame* option_frame = new TGVerticalFrame(superimpose_frame, 200, 250, kFixedWidth);
+                TGHorizontalFrame* controlFrameXRange = new TGHorizontalFrame(option_frame, 200, 40);
+                TGHorizontalFrame* controlFrameYRange = new TGHorizontalFrame(option_frame, 200, 40);
+                TGTextButton* apply_custom_button = new TGTextButton(option_frame, "Apply");
+
 
         preview_canvas = new TRootEmbeddedCanvas("Preview", frame);
         superimpose_canvas = new TRootEmbeddedCanvas("Superimpose", superimpose_frame);
         selection_box  = new TGListBox(selection_frame);
 
+        selection_buttons_frame->AddFrame(remove_selected_item_button, new TGLayoutHints(kLHintsExpandX, 2,2,2,2));
+        selection_buttons_frame->AddFrame(clear_button, new TGLayoutHints(kLHintsExpandX, 2,2,2,2));
 
-        selection_buttons_frame->AddFrame(remove_selected_item_button, new TGLayoutHints(kLHintsExpandX));
-        selection_buttons_frame->AddFrame(clear_button, new TGLayoutHints(kLHintsExpandX));
+        selection_frame->AddFrame(selection_box, new TGLayoutHints(kLHintsExpandX | kLHintsExpandY, 2,2,2,2));
+        selection_frame->AddFrame(selection_buttons_frame, new TGLayoutHints(kLHintsExpandX, 2,2,2,2));
 
-        selection_frame->AddFrame(selection_box, new TGLayoutHints(kLHintsExpandX | kLHintsExpandY));
-        selection_frame->AddFrame(selection_buttons_frame, new TGLayoutHints(kLHintsExpandX));
-
-        preview_frame->AddFrame(selection_frame, new TGLayoutHints(kLHintsExpandY));
-        preview_frame->AddFrame(preview_canvas, new TGLayoutHints(kLHintsExpandX | kLHintsExpandY));
-
-        remove_selected_item_button->Connect("Clicked()", "SuperimposePlugin", this, "RemoveSelected()");
-        clear_button->Connect("Clicked()", "SuperimposePlugin", this, "ClearAll()");
-
-        // ------- Custom
-        TGVerticalFrame* option_frame = new TGVerticalFrame(superimpose_frame, 200, 250, kFixedWidth);
+        preview_frame->AddFrame(selection_frame, new TGLayoutHints(kLHintsExpandY, 2,2,2,2));
+        preview_frame->AddFrame(preview_canvas, new TGLayoutHints(kLHintsExpandX | kLHintsExpandY, 2,2,2,2));
 
         // X Axis
-        TGHorizontalFrame* controlFrameXRange = new TGHorizontalFrame(option_frame, 200, 40);
-
-        TGCheckButton* xRangeCheckbox         = new TGCheckButton(option_frame,"Use Custom X Range");
-        TGNumberEntryField* xminNumbertextbox = new TGNumberEntryField(controlFrameXRange);
-        TGNumberEntryField* xmaxNumbertextbox = new TGNumberEntryField(controlFrameXRange);
+        xRangeCheckbox    = new TGCheckButton(option_frame,"Use Custom X Range");
+        xminNumbertextbox = new TGNumberEntryField(controlFrameXRange);
+        xmaxNumbertextbox = new TGNumberEntryField(controlFrameXRange);
 
         controlFrameXRange->AddFrame(xminNumbertextbox, new TGLayoutHints(kLHintsLeft | kLHintsExpandX, 2,2,2,2));
         controlFrameXRange->AddFrame(xmaxNumbertextbox, new TGLayoutHints(kLHintsLeft | kLHintsExpandX, 2,2,2,2));
 
         // Y Axis
-        TGHorizontalFrame* controlFrameYRange = new TGHorizontalFrame(option_frame, 200, 40);
-
-        TGCheckButton* yRangeCheckbox    = new TGCheckButton(option_frame,"Use Custom Y Range");
-        TGNumberEntryField* yminNumbertextbox = new TGNumberEntryField(controlFrameYRange);
-        TGNumberEntryField* ymaxNumbertextbox = new TGNumberEntryField(controlFrameYRange);
+        yRangeCheckbox    = new TGCheckButton(option_frame,"Use Custom Y Range");
+        yminNumbertextbox = new TGNumberEntryField(controlFrameYRange);
+        ymaxNumbertextbox = new TGNumberEntryField(controlFrameYRange);
 
         controlFrameYRange->AddFrame(yminNumbertextbox, new TGLayoutHints(kLHintsLeft | kLHintsExpandX, 2,2,2,2));
         controlFrameYRange->AddFrame(ymaxNumbertextbox, new TGLayoutHints(kLHintsLeft | kLHintsExpandX, 2,2,2,2));
-
-        TGTextButton* apply_custom_button = new TGTextButton(option_frame, "Apply");
 
         // ------- Add to Custom
         option_frame->AddFrame(xRangeCheckbox,     new TGLayoutHints(kLHintsExpandX, 2,2,2,2));
@@ -117,12 +117,44 @@ public:
         superimpose_frame->AddFrame(option_frame, new TGLayoutHints(kLHintsBottom, 2,2,2,2));
         superimpose_frame->AddFrame(superimpose_canvas, new TGLayoutHints(kLHintsExpandX | kLHintsExpandY, 2,2,2,2));
 
-        frame->AddFrame(preview_frame, new TGLayoutHints(kLHintsExpandX | kLHintsExpandY));
-        frame->AddFrame(superimpose_frame, new TGLayoutHints(kLHintsExpandX | kLHintsExpandY));
+        frame->AddFrame(preview_frame, new TGLayoutHints(kLHintsExpandX | kLHintsExpandY, 2,2,2,2));
+        frame->AddFrame(superimpose_frame, new TGLayoutHints(kLHintsExpandX | kLHintsExpandY, 2,2,2,2));
+
+        remove_selected_item_button->Connect("Clicked()", "SuperimposePlugin", this, "RemoveSelected()");
+        clear_button->Connect("Clicked()", "SuperimposePlugin", this, "ClearAll()");
+        apply_custom_button->Connect("Clicked()", "SuperimposePlugin", this, "SuperimposeAll()");
+    }
+
+
+    void PreviewAll() {
+        TCanvas* canvas = preview_canvas->GetCanvas();
+        canvas->Clear();
+        canvas->Divide(selected_objects.size(), 1);
+
+        // Dont work on originals so that chaging something in the preview
+        // does not affect superimpose and v.v.
+        vector<TH1*> copies;
+        for(auto& elem : selected_objects){
+            copies.push_back((TH1*)elem.second->Clone());
+        }
+
+        int i = 1;
+        for(auto& elem : copies) {
+            canvas->cd(i++);
+            elem->Draw();
+        }
+        canvas->Update();
     }
 
     void SuperimposeAll() {
         TCanvas* canvas = superimpose_canvas->GetCanvas();
+
+        // Dont work on originals so that chaging something in the preview
+        // does not affect superimpose and v.v.
+        vector<TH1*> copies;
+        for(auto& elem : selected_objects){
+            copies.push_back((TH1*)elem.second->Clone());
+        }
 
         canvas->cd();
 
@@ -136,9 +168,17 @@ public:
         auto legend = new TLegend(0.65,0.8,0.85,0.9);
 
         int idx = 0;
-        for(auto& elem : selection_obj) {
+        for(auto& elem : copies) {
+
+            if(xRangeCheckbox->IsOn())
+                elem->SetAxisRange(xminNumbertextbox->GetNumber(), xmaxNumbertextbox->GetNumber(),"X");
+
+            if(yRangeCheckbox->IsOn())
+                elem->SetAxisRange(yminNumbertextbox->GetNumber(), ymaxNumbertextbox->GetNumber(),"Y");
+
             elem->SetLineColor(colors[idx]);
             legend->AddEntry(elem, elem->GetTitle());
+            elem->SetTitle("Superimposed");
 
             if(idx==0) elem->Draw();
             else       elem->Draw("SAME");
@@ -151,18 +191,7 @@ public:
         canvas->Update();
     }
 
-    void PreviewAll() {
-        TCanvas* canvas = preview_canvas->GetCanvas();
-        canvas->Clear();
-        canvas->Divide(selection_obj.size(), 1);
 
-        int i = 1;
-        for(auto& elem : selection_obj) {
-            canvas->cd(i++);
-            elem->Draw();
-        }
-        canvas->Update();
-    }
 
     void ClearAll() {
         preview_canvas->GetCanvas()->Clear();
@@ -172,20 +201,36 @@ public:
         superimpose_canvas->GetCanvas()->Update();
 
         selection_box->RemoveAll();
-        selection_obj.clear();
+        selected_objects.clear();
     }
 
     void RemoveSelected() {
-        cout << "RemoveSelected" << endl;
+        TGLBEntry* elem = selection_box->GetSelectedEntry();
+
+        if(!elem)
+            return;
+
+        int selected_id = selection_box->GetSelected();
+        selected_objects.erase(selected_id);
+        selection_box->RemoveEntry(selected_id);
+
+        PreviewAll();
+        SuperimposeAll();
     }
 
 private:
     TGListBox*         selection_box;
-    vector<TH1*>       selection_obj;
+    map<int, TH1*>     selected_objects;
 
     TRootEmbeddedCanvas* preview_canvas;
     TRootEmbeddedCanvas* superimpose_canvas;
 
+    TGCheckButton* xRangeCheckbox;
+    TGCheckButton* yRangeCheckbox;
+    TGNumberEntryField* xminNumbertextbox;
+    TGNumberEntryField* xmaxNumbertextbox;
+    TGNumberEntryField* yminNumbertextbox;
+    TGNumberEntryField* ymaxNumbertextbox;
 };
 
 
