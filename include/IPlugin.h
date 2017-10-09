@@ -4,18 +4,28 @@
 #include "TGFrame.h"
 #include "TRootEmbeddedCanvas.h"
 #include "TGListBox.h"
+#include "TGTextEntry.h"
+#include "TGLabel.h"
 
 class IPlugin {
+    RQ_OBJECT("IPlugin")
+
 public:
     virtual ~IPlugin() {}
     virtual void DrawInFrame(TGCompositeFrame* frame) = 0;
     virtual void Receive(TH1* t) = 0;
+    virtual void ReceiveNewFileOpen(string* filepath) = 0;
+
+    // TODO: MAYBE>?? DESIGN IT PROPERLY BEFORE IMPLEMENTING
+//    vector<TFile*> GetOpenedFiles() {
+//        Emit()
+//    }
 
     void SignalStatus(string*);
 };
 
 
-class PreviewPlugin : IPlugin {
+class PreviewPlugin : public IPlugin {
     RQ_OBJECT("PreviewPlugin")
 
 public:
@@ -34,37 +44,22 @@ public:
         }
     }
 
+    void ReceiveNewFileOpen(string* filepath) override {
+        cout << "PreviewPlugin::ReceiveNewFileOpen(string*) NOT IMPLEMENTED" << endl;
+    }
+
+
 private:
     TRootEmbeddedCanvas* embedded_canvas;
 };
 
-
-class SuperimposePlugin : IPlugin {
+class SuperimposePlugin : public IPlugin {
     RQ_OBJECT("SuperimposePlugin")
 
 public:
     SuperimposePlugin() {}
 
-    void Receive(TH1* t) override {
-        // dont allow duplicates in list:
-        // FIXME: This does not work like its supposed to.
-//        for(auto& e : selected_objects) {
-//            if (t->Compare(e.second) == 0)
-//                return;
-//        }
-
-        int num_selected = selected_objects.size();
-        selected_objects[num_selected] = t;
-
-        selection_box->AddEntry(t->GetTitle(), num_selected);
-        selection_box->Layout();
-
-        PreviewAll();
-        SuperimposeAll();
-    }
-
     void DrawInFrame(TGCompositeFrame* frame) override {
-
 
         TGHorizontalFrame* preview_frame = new TGHorizontalFrame(frame);
             TGVerticalFrame* selection_frame = new TGVerticalFrame(preview_frame, 202, 250, kFixedWidth);
@@ -127,6 +122,29 @@ public:
         clear_button->Connect("Clicked()", "SuperimposePlugin", this, "ClearAll()");
         apply_custom_button->Connect("Clicked()", "SuperimposePlugin", this, "SuperimposeAll()");
     }
+
+    void Receive(TH1* t) override {
+        // dont allow duplicates in list:
+        // FIXME: This does not work like its supposed to.
+//        for(auto& e : selected_objects) {
+//            if (t->Compare(e.second) == 0)
+//                return;
+//        }
+
+        int num_selected = selected_objects.size();
+        selected_objects[num_selected] = t;
+
+        selection_box->AddEntry(t->GetTitle(), num_selected);
+        selection_box->Layout();
+
+        PreviewAll();
+        SuperimposeAll();
+    }
+
+    void ReceiveNewFileOpen(string* filepath) override {
+        cout << "SuperimposePlugin::ReceiveNewFileOpen(string*) NOT IMPLEMENTED" << endl;
+    }
+
 
 
     void PreviewAll() {
@@ -194,8 +212,6 @@ public:
         canvas->Update();
     }
 
-
-
     void ClearAll() {
         Emit("SignalStatus(string*)", new string("Cleared all"));
 
@@ -238,7 +254,64 @@ private:
     TGNumberEntryField* ymaxNumbertextbox;
 };
 
+class ComparisonPlugin : public IPlugin {
+    RQ_OBJECT("ComparisonPlugin")
 
+public:
+    ComparisonPlugin() {}
+
+    void DrawInFrame(TGCompositeFrame* frame) override {
+         files_frame = new TGHorizontalFrame(frame);
+         TGHorizontalFrame* search_frame = new TGHorizontalFrame(frame);
+
+         TGHorizontalFrame* out_frame = new TGHorizontalFrame(frame);
+         selection_box = new TGListBox(out_frame);
+
+         search_box = new TGTextEntry(search_frame);
+         applyfilter_button = new TGTextButton(search_frame, "Apply Filter");
+
+         search_frame->AddFrame(search_box, new TGLayoutHints(kLHintsExpandX));
+         search_frame->AddFrame(applyfilter_button);
+
+         out_frame->AddFrame(selection_box, new TGLayoutHints(kLHintsExpandX | kLHintsExpandY));
+
+         frame->AddFrame(search_frame, new TGLayoutHints(kLHintsExpandX));
+         frame->AddFrame(files_frame, new TGLayoutHints(kLHintsExpandX | kLHintsExpandY));
+         frame->AddFrame(out_frame, new TGLayoutHints(kLHintsExpandX | kLHintsExpandY));
+    }
+
+    void Receive(TH1* t) override {
+        TGVerticalFrame* group_frame = new TGVerticalFrame(files_frame);
+        TGListBox* selection_box = new TGListBox(group_frame);
+        TGLabel*   selection_label = new TGLabel(group_frame, t->GetTitle());
+
+        selection_box->AddEntry("TEST1", 0);
+        listboxes.push_back(selection_box);
+
+        group_frame->AddFrame(selection_label);
+        group_frame->AddFrame(selection_box, new TGLayoutHints(kLHintsExpandX | kLHintsExpandY));
+
+        files_frame->AddFrame(group_frame, new TGLayoutHints(kLHintsExpandX | kLHintsExpandY));
+
+        files_frame->MapSubwindows();
+        files_frame->MapWindow();
+        files_frame->Layout();
+    }
+
+    void ReceiveNewFileOpen(string* filepath) override {
+        cout << "ComparisonPlugin::ReceiveNewFileOpen(string*) NOT IMPLEMENTED" << endl;
+    }
+
+
+private:
+    vector<TGListBox*> listboxes;
+    vector<TGLabel*>   labels;
+
+    TGHorizontalFrame* files_frame;
+    TGTextEntry*       search_box;
+    TGTextButton*      applyfilter_button;
+    TGListBox*         selection_box;
+};
 
 
 #endif

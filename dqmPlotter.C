@@ -24,7 +24,7 @@ void dqmPlotter() {
 
     MenuBar*  menu = new MenuBar();
     Browser* browser = new Browser();
-    SuperimposePlugin* plugin = new SuperimposePlugin();
+    IPlugin* plugin = new ComparisonPlugin();
     StatusBar* status_bar = new StatusBar();
 
     TGHorizontalFrame* containter_frame = new TGHorizontalFrame(main_frame);
@@ -49,7 +49,7 @@ void dqmPlotter() {
     main_frame->MapWindow();
     main_frame->Layout();
     
-    browser->Connect("OpenItemDoubleClicked(TH1*)", "SuperimposePlugin", plugin, "Receive(TH1*)");
+    browser->Connect("OpenItemDoubleClicked(TH1*)", "IPlugin", plugin, "Receive(TH1*)");
     menu->Connect("IndexUpdated()", "Browser", browser, "UpdateLists()");
     
     browser->Connect("SignalStatus(string*)", "StatusBar", status_bar, "ReceiveStatus(string*)");

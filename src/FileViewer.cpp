@@ -18,6 +18,14 @@ void FileViewer::OpenFileInTreeView(const string& remote_file_path, const string
             item->SetPictures(popen, pclose);
             tree_items_map[item] = ((TKey*)i);
             open_files[displayname] = item;
+
+            cout << "================" << endl;
+            cout << "displayname: " << displayname << endl;
+            cout << "filepath: " << remote_file_path << endl;
+            cout << "================" << endl;
+            //TODO: open new file emitsignal HERE!!!!!
+            //Emit("OpenNewFile(string*)", );
+
         }
     }
 }

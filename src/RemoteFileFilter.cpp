@@ -15,7 +15,7 @@ void RemoteFileFilter::DrawInFrame(TGCompositeFrame* mf) {
     search_box = new TGTextEntry(search_frame);
     applyfilter_button = new TGTextButton(search_frame, "Apply Filter");
 
-    search_frame->AddFrame(module_dropdown);
+    search_frame->AddFrame(module_dropdown, new TGLayoutHints(kLHintsExpandX));
     search_frame->AddFrame(search_box, new TGLayoutHints(kLHintsExpandX));
     search_frame->AddFrame(applyfilter_button);
 
