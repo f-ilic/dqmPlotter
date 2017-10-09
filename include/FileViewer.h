@@ -33,6 +33,14 @@ public:
     void TreeItemDoubleClicked(TGListTreeItem* item, int id);
     void PrintSomething(map<string*, string*>*);
 
+//signal: INTERFACE
+    /// Emits "SignalStatus(string*)" which is received by the browser
+    /// which in turn also emits a "SignalStatus(string*)", which is
+    /// intended to be connected to StatusBar::ReceiveStatus(string*)
+    void SignalStatus(string*); //*SIGNAL
+
+
+
 //slot: INTERFACE
     void DisplayInTreeView(map<string*, string*> *t); //*SLOT*
 
@@ -43,7 +51,7 @@ public:
     void ItemDoubleClicked(TH1*); //*SIGNAL*
 
 private:
-    TFile* GetRemoteFile(const string& filepath);
+    TFile* GetRemoteFile(const string& filepath, const string& displayname);
     void AddChildren(TGListTreeItem* parent);
     void OpenFileInTreeView(const string& remote_file_path, const string& displayname="");
     void PrintSelectedItem();

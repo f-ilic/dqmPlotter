@@ -10,6 +10,8 @@ public:
     virtual ~IPlugin() {}
     virtual void DrawInFrame(TGCompositeFrame* frame) = 0;
     virtual void Receive(TH1* t) = 0;
+
+    void SignalStatus(string*);
 };
 
 
@@ -45,10 +47,11 @@ public:
 
     void Receive(TH1* t) override {
         // dont allow duplicates in list:
-        for(auto& e : selected_objects) {
-            if (t->Compare(e.second) == 0)
-                return;
-        }
+        // FIXME: This does not work like its supposed to.
+//        for(auto& e : selected_objects) {
+//            if (t->Compare(e.second) == 0)
+//                return;
+//        }
 
         int num_selected = selected_objects.size();
         selected_objects[num_selected] = t;
@@ -194,6 +197,8 @@ public:
 
 
     void ClearAll() {
+        Emit("SignalStatus(string*)", new string("Cleared all"));
+
         preview_canvas->GetCanvas()->Clear();
         preview_canvas->GetCanvas()->Update();
 

@@ -14,11 +14,15 @@ class Browser {
 
 public:
     Browser();
-    void DrawInFrame(TGCompositeFrame* mf);
+    void DrawInFrame(TGCompositeFrame* frame);
     void UpdateLists();
 
-    void ReceiveItem(TH1* t); //*SLOT*
+    // signal: INTERFACE
+    void SignalStatus(string* t); //*SIGNAL*
     void OpenItemDoubleClicked(TH1* t); //*SIGNAL*
+
+    // slot: INTERNAL
+    void ReceiveItem(TH1* t); //*SLOT*
 
 private:
     RemoteFileFilter   file_filter;

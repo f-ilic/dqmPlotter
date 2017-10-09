@@ -6,13 +6,12 @@ FileViewer::FileViewer() {
 }
 
 void FileViewer::OpenFileInTreeView(const string& remote_file_path, const string& displayname) { 
-    if (list_tree->FindChildByName(nullptr, displayname.c_str()))
-    {        
-        StatusBar::GetStatusBar().GetStatusBarControl()->SetText("This dataset has been already loaded. Skipping...", 0);
+    if (list_tree->FindChildByName(nullptr, displayname.c_str())) {
+        Emit("SignalStatus(string*)", new string("File already loaded; Skipping!"));
         return;
     }
   
-    TFile* remote_file = GetRemoteFile(remote_file_path);
+    TFile* remote_file = GetRemoteFile(remote_file_path, displayname);
     if (remote_file && !IsFileOpen(displayname)) {
         for (auto i: *(remote_file->GetListOfKeys())) {
             TGListTreeItem* item = list_tree->AddItem(nullptr, displayname.c_str());
@@ -89,9 +88,8 @@ void FileViewer::RemoveAll() {
     tree_items_map.clear();
 }
 
-//TODO: change signature to (const string& filepath, const string& displayname)
-//      so that you dont have to parse the filepath again.
-TFile* FileViewer::GetRemoteFile(const string& filepath) {
+
+TFile* FileViewer::GetRemoteFile(const string& filepath, const string& displayname) {
     if(!DEVMODE) {
         gEnv->SetValue("Davix.GSI.UserCert", "/afs/cern.ch/user/p/pjurgiel/.globus/copy/usercert.pem");
         gEnv->SetValue("Davix.GSI.UserKey", "/afs/cern.ch/user/p/pjurgiel/.globus/copy/userkey_nopass.pem");
@@ -100,20 +98,16 @@ TFile* FileViewer::GetRemoteFile(const string& filepath) {
     
     string file_path_to_open = filepath;
 
-    if (Configuration::GetConfiguration().GetValue(Configuration::LOCALCOPIES) == "ON") {
-        TGStatusBar* statusBar = StatusBar::GetStatusBar().GetStatusBarControl();
-        statusBar->SetText("Downloading file to disk. This can take a while...", 0);
+    if (Configuration::Instance().GetValue(Configuration::LOCALCOPIES) == "ON") {
+        Emit("SignalStatus(string*)", new string("Loading file to disk..."));
       
-        string local_copy_name = filepath.substr(filepath.rfind("/") + 1);
-        string local_copy_path = Configuration::GetConfiguration().GetValue(Configuration::TMPDATADIRECTORY) + local_copy_name;
-        
+        string local_copy_path = Configuration::Instance().GetValue(Configuration::TMPDATADIRECTORY) + displayname;
         TFile* remote_file = TFile::Open(filepath.c_str());
         remote_file->Cp(local_copy_path.c_str());
         remote_file->Close();
-        
         file_path_to_open = local_copy_path;
-        
-        statusBar->SetText((string("File ") + filepath + " downloaded.").c_str(), 0);
+
+        Emit("SignalStatus(string*)", new string(filepath + " download complete!"));
     }
     
     return TFile::Open(file_path_to_open.c_str());
@@ -154,7 +148,10 @@ void FileViewer::AddChildren(TGListTreeItem* parent) {
     }
 }
 
-
+//TODO: refactor into 2 parts;
+// first part add stuff locally
+// second part is a function that emits the signal that
+// we need to catch later on
 void FileViewer::TreeItemDoubleClicked(TGListTreeItem* item, int id) {
     TObject* object = tree_items_map[item]->ReadObj();
     AddChildren(item);

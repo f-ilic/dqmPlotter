@@ -4,7 +4,7 @@
 #include <iostream>
 
 RemoteFileFilter::RemoteFileFilter() {
-    FillFromFile(Configuration::GetConfiguration().GetValue(Configuration::DATABASEPATH));
+    FillFromFile(Configuration::Instance().GetValue(Configuration::DATABASEPATH));
 }
 
 void RemoteFileFilter::DrawInFrame(TGCompositeFrame* mf) {
@@ -24,7 +24,7 @@ void RemoteFileFilter::DrawInFrame(TGCompositeFrame* mf) {
     top_frame->AddFrame(search_frame, new TGLayoutHints(kLHintsExpandX, 2, 2, 2, 2));
     top_frame->AddFrame(available_files_box, new TGLayoutHints(kLHintsExpandX | kLHintsExpandY, 2, 2, 2, 2));
 
-    FillModuleFilters(Configuration::GetConfiguration().GetValue(Configuration::DATABASEFILTERSPATH));
+    FillModuleFilters(Configuration::Instance().GetValue(Configuration::DATABASEFILTERSPATH));
 
     module_dropdown->Resize(140, 20);
     module_dropdown->Select(0);

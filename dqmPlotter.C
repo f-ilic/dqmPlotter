@@ -4,8 +4,6 @@ R__LOAD_LIBRARY(lib/RemoteFileFilter_cpp.so)
 R__LOAD_LIBRARY(lib/FileViewer_cpp.so)
 R__LOAD_LIBRARY(lib/Configuration_cpp.so)
 R__LOAD_LIBRARY(lib/MenuBar_cpp.so)
-R__LOAD_LIBRARY(lib/StatusBar_cpp.so)
-
 
 #include "include/Browser.h"
 #include "include/MenuBar.h"
@@ -14,12 +12,11 @@ R__LOAD_LIBRARY(lib/StatusBar_cpp.so)
 #include "TGSplitter.h"
 
 void dqmPlotter() {
-  
     int width = 1000;
     int height = 700;
     
     // FIRST OF ALL: LOAD CONFIGURATION DATA
-    Configuration::GetConfiguration("DATA/con.fig");
+    Configuration::Instance("DATA/con.fig");
     
     TGMainFrame* main_frame = new TGMainFrame(gClient->GetRoot(), width, height);
     main_frame->SetWindowName("DQM Plotter");
@@ -28,6 +25,7 @@ void dqmPlotter() {
     MenuBar*  menu = new MenuBar();
     Browser* browser = new Browser();
     SuperimposePlugin* plugin = new SuperimposePlugin();
+    StatusBar* status_bar = new StatusBar();
 
     TGHorizontalFrame* containter_frame = new TGHorizontalFrame(main_frame);
 
@@ -43,28 +41,23 @@ void dqmPlotter() {
     containter_frame->AddFrame(browser_area, new TGLayoutHints(kLHintsExpandY));
     containter_frame->AddFrame(vsplitter,  new TGLayoutHints(kLHintsExpandY, 5, 5, 5, 5));
     containter_frame->AddFrame(plugin_area, new TGLayoutHints(kLHintsExpandX | kLHintsExpandY));
-
     main_frame->AddFrame(containter_frame, new TGLayoutHints(kLHintsExpandX | kLHintsExpandY));
-    
-    StatusBar::GetStatusBar(main_frame, width);
+
+    status_bar->DrawInFrame(main_frame);
 
     main_frame->MapSubwindows();
     main_frame->MapWindow();
-
     main_frame->Layout();
     
-    // MENU -> BROWSER CONNECTION
-
-//    browser->Connect("OpenItemDoubleClicked(TH1*)", "PreviewPlugin", plugin, "Receive(TH1*)");
     browser->Connect("OpenItemDoubleClicked(TH1*)", "SuperimposePlugin", plugin, "Receive(TH1*)");
     menu->Connect("IndexUpdated()", "Browser", browser, "UpdateLists()");
     
+    browser->Connect("SignalStatus(string*)", "StatusBar", status_bar, "ReceiveStatus(string*)");
+    plugin->Connect("SignalStatus(string*)", "StatusBar", status_bar, "ReceiveStatus(string*)");
+
     // CREATE LOCAL DATA DIRECTORY
-    // TODO: check if exist first...
-    string cmd = "mkdir " + Configuration::GetConfiguration().GetValue(Configuration::TMPDATADIRECTORY);
+    string cmd = "mkdir -p " + Configuration::Instance().GetValue(Configuration::TMPDATADIRECTORY);
     system(cmd.c_str());
-    
-    StatusBar::GetStatusBar().GetProgressBar()->SetBarColor("red");
 }
 
 
@@ -72,7 +65,8 @@ class DQMPlotter {
 public:
 
 private:
-    MenuBar        menu;
-    Browser     browser;
-
+    MenuBar   menu;
+    Browser   browser;
+//    IPlugin*  plugin;
+    StatusBar status_bar;
 };

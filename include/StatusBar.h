@@ -5,28 +5,26 @@
 #include "TGStatusBar.h"
 #include "TGProgressBar.h"
 
-class StatusBar final{
-    public:
-        void DrawInFrame(TGMainFrame *main_frame, Int_t width = 1000);
-        
-        static StatusBar& GetStatusBar(TGMainFrame *main_frame = nullptr, Int_t width = 1000)
-        {
-            static StatusBar statusBar(main_frame, width);
-            
-            return statusBar;
-        }
-        
-        TGStatusBar* GetStatusBarControl() { return this->statusBar; }
-        TGProgressBar* GetProgressBar() { return this->progress; }
-        
-    protected:
-        StatusBar(TGMainFrame *main_frame, Int_t width = 1000) {
-            DrawInFrame(main_frame, width);
-        }
-    private:
-        TGStatusBar* statusBar;
-        TGCompositeFrame* subFrame;
-        TGHProgressBar* progress;
+class StatusBar {
+    RQ_OBJECT("StatusBar")
+
+public:
+    StatusBar() {}
+
+    void DrawInFrame(TGCompositeFrame* frame) {
+        status_bar = new TGStatusBar(frame, 50, 50, kHorizontalFrame);
+        frame->AddFrame(status_bar, new TGLayoutHints(kLHintsExpandX));
+        status_bar->SetText("Program started!", 0);
+    }
+
+    // slot: INTERFACE
+    void ReceiveStatus(string* t) {
+        status_bar->SetText(t->c_str(), 0);
+        delete t;
+    }
+
+private:
+    TGStatusBar* status_bar;
 };
 
 #endif

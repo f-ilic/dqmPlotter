@@ -29,7 +29,7 @@ void MenuBar::HandleMenu(Int_t menu_id) {
         break;
     }
     case M_FILE_EXIT:{
-        string cmd = "rm -rf " + Configuration::GetConfiguration().GetValue(Configuration::TMPDATADIRECTORY) + "*";
+        string cmd = "rm -rf " + Configuration::Instance().GetValue(Configuration::TMPDATADIRECTORY) + "*";
         if(system(cmd.c_str())) {
             cout << "system(cmd) returned nullptr" << endl;
             cout << " -- maybe bad" << endl;
@@ -52,7 +52,7 @@ void MenuBar::DrawInFrame(TGMainFrame *main_frame) {
     
     popup_menu->AddEntry("Exit", M_FILE_EXIT, 0, gClient->GetPicture("bld_exit.png"));
     
-    if (Configuration::GetConfiguration().GetValue(Configuration::LOCALCOPIES) == "ON"){
+    if (Configuration::Instance().GetValue(Configuration::LOCALCOPIES) == "ON"){
         popup_menu->CheckEntry(M_WORK_WITH_LOCAL_COPIES);
     }
     
@@ -67,62 +67,57 @@ void MenuBar::DrawInFrame(TGMainFrame *main_frame) {
 
 void MenuBar::SetCertificatePath(const string& path) const{
     if (path != ""){
-        StatusBar::GetStatusBar().GetStatusBarControl()->SetText((string("Setting certificate path to: ") + path).c_str(), 0);
+//        StatusBar::GetStatusBar().GetStatusBarControl()->SetText((string("Setting certificate path to: ") + path).c_str(), 0);
     }
 }
 
 void MenuBar::SetPublicKeyPath(const string& path) const{
     if (path != ""){       
-        StatusBar::GetStatusBar().GetStatusBarControl()->SetText((string("Setting public key path to: ") + path).c_str(), 0);
+//        StatusBar::GetStatusBar().GetStatusBarControl()->SetText((string("Setting public key path to: ") + path).c_str(), 0);
     }
 }
 
 void MenuBar::UpdateIndex(){
-    if (Configuration::GetConfiguration().GetValue(Configuration::USERCERTPATH) == "" || 
-        Configuration::GetConfiguration().GetValue(Configuration::USERPUBLICKEYPATH) == ""){
-        cout << "Certificates not set: \n\t" << Configuration::GetConfiguration().GetValue(Configuration::USERCERTPATH) << "\n\t" 
-                                             << Configuration::GetConfiguration().GetValue(Configuration::USERPUBLICKEYPATH) << endl;
+    if (Configuration::Instance().GetValue(Configuration::USERCERTPATH) == "" ||
+        Configuration::Instance().GetValue(Configuration::USERPUBLICKEYPATH) == ""){
+        cout << "Certificates not set: \n\t" << Configuration::Instance().GetValue(Configuration::USERCERTPATH) << "\n\t"
+                                             << Configuration::Instance().GetValue(Configuration::USERPUBLICKEYPATH) << endl;
                                              
-        StatusBar::GetStatusBar().GetStatusBarControl()->SetText("Certificates not set", 0);
+//        StatusBar::GetStatusBar().GetStatusBarControl()->SetText("Certificates not set", 0);
 
     } else {
-        string cmd = "python " + app_path + Configuration::GetConfiguration().GetValue(Configuration::UPDATEDATABASESCRIPTPATH) + " " +
-                app_path + Configuration::GetConfiguration().GetValue(Configuration::DATABASECREATION) +    " " +
-                app_path + Configuration::GetConfiguration().GetValue(Configuration::DATABASEPATH) + " " +
-                Configuration::GetConfiguration().GetValue(Configuration::USERCERTPATH) + " " +
-                Configuration::GetConfiguration().GetValue(Configuration::USERPUBLICKEYPATH);
+        string cmd = "python " + app_path + Configuration::Instance().GetValue(Configuration::UPDATEDATABASESCRIPTPATH) + " " +
+                app_path + Configuration::Instance().GetValue(Configuration::DATABASECREATION) +    " " +
+                app_path + Configuration::Instance().GetValue(Configuration::DATABASEPATH) + " " +
+                Configuration::Instance().GetValue(Configuration::USERCERTPATH) + " " +
+                Configuration::Instance().GetValue(Configuration::USERPUBLICKEYPATH);
 
         cout << "Running: " << cmd << endl;
-        StatusBar::GetStatusBar().GetStatusBarControl()->SetText("Running database update. Please wait...", 0);
+//        StatusBar::GetStatusBar().GetStatusBarControl()->SetText("Running database update. Please wait...", 0);
 
         int res = system(cmd.c_str());
 
         cout << "Exit code: " << res << endl;
         if (res == 0) {
-            StatusBar::GetStatusBar().GetStatusBarControl()->SetText("Database updated successfully.", 0);
+//            StatusBar::GetStatusBar().GetStatusBarControl()->SetText("Database updated successfully.", 0);
             
             Emit("IndexUpdated()");
         } else {
-            StatusBar::GetStatusBar().GetStatusBarControl()->SetText("Error. Database update not successful.", 0);
+//            StatusBar::GetStatusBar().GetStatusBarControl()->SetText("Error. Database update not successful.", 0);
         }
     }
 }
 
 void MenuBar::TogglePopupEntry(Int_t menu_id){
-    if (this->popup_menu->IsEntryChecked(menu_id))
-    {
+    if (this->popup_menu->IsEntryChecked(menu_id)) {
         this->popup_menu->UnCheckEntry(menu_id);
-        
-        if (menu_id == M_WORK_WITH_LOCAL_COPIES)
-        {
-            Configuration::GetConfiguration().UpdateKey(Configuration::LOCALCOPIES, "OFF");
+        if (menu_id == M_WORK_WITH_LOCAL_COPIES) {
+            Configuration::Instance().UpdateKey(Configuration::LOCALCOPIES, "OFF");
         }
     } else {
         this->popup_menu->CheckEntry(menu_id);
-        
-        if (menu_id == M_WORK_WITH_LOCAL_COPIES)
-        {
-            Configuration::GetConfiguration().UpdateKey(Configuration::LOCALCOPIES, "ON");
+        if (menu_id == M_WORK_WITH_LOCAL_COPIES) {
+            Configuration::Instance().UpdateKey(Configuration::LOCALCOPIES, "ON");
         }
     }
 }

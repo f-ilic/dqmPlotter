@@ -5,17 +5,18 @@
 #include "TGSplitter.h"
 
 Browser::Browser() {
-
     file_filter.Connect("FilesSelected(map<string*, string*>*)",
                         "FileViewer",
                         &file_view,
                         "DisplayInTreeView(map<string*, string*>*)");
 
     file_view.Connect("ItemDoubleClicked(TH1*)", "Browser", this, "ReceiveItem(TH1*)");
+
+    file_view.Connect("SignalStatus(string*)", "Browser", this, "SignalStatus(string*)");
 }
 
-void Browser::DrawInFrame(TGCompositeFrame *mf) {
-    TGVerticalFrame* top_frame = new TGVerticalFrame(mf);
+void Browser::DrawInFrame(TGCompositeFrame* frame) {
+    TGVerticalFrame* top_frame = new TGVerticalFrame(frame);
 
     TGHorizontalFrame* up = new TGHorizontalFrame(top_frame,10, 300, kFixedHeight);
     TGHorizontalFrame* down = new TGHorizontalFrame(top_frame);
@@ -30,21 +31,23 @@ void Browser::DrawInFrame(TGCompositeFrame *mf) {
     top_frame->AddFrame(hsplitter,  new TGLayoutHints(kLHintsTop | kLHintsExpandX));
     top_frame->AddFrame(down,  new TGLayoutHints(kLHintsExpandX | kLHintsExpandY));
 
-    mf->AddFrame(top_frame, new TGLayoutHints(kLHintsExpandX | kLHintsExpandY));
+    frame->AddFrame(top_frame, new TGLayoutHints(kLHintsExpandX | kLHintsExpandY));
 }
 
 void Browser::UpdateLists() {
-    StatusBar::GetStatusBar().GetStatusBarControl()->SetText("Updating GUI content. Please wait", 0);
+    Emit("SignalStatus(string*)", new string("Updating content ..."));
 
-    file_filter.FillFromFile(Configuration::GetConfiguration().GetValue(Configuration::DATABASEPATH), true);
-    file_filter.FillModuleFilters(Configuration::GetConfiguration().GetValue(Configuration::DATABASEFILTERSPATH),true) ;
+    file_filter.FillFromFile(Configuration::Instance().GetValue(Configuration::DATABASEPATH), true);
+    file_filter.FillModuleFilters(Configuration::Instance().GetValue(Configuration::DATABASEFILTERSPATH), true) ;
     
-    StatusBar::GetStatusBar().GetStatusBarControl()->SetText("GUI content updated", 0);
-
+    Emit("SignalStatus(string*)", new string("Ready!"));
 }
 
 void Browser::ReceiveItem(TH1* t){
-    cout << "Browser::ReceiveItem()" << endl;
     Emit("OpenItemDoubleClicked(TH1*)", t);
+}
+
+void Browser::SignalStatus(string* t) {
+    Emit("SignalStatus(string*)", t);
 }
 
