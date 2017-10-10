@@ -16,12 +16,6 @@ public:
     virtual void Receive(TH1* t) = 0;
     virtual void ReceiveFileLoaded(map<string*, string*>* t) = 0;
     virtual void ReceiveFileClose(string*) = 0;
-
-    // TODO: MAYBE>?? DESIGN IT PROPERLY BEFORE IMPLEMENTING
-//    vector<TFile*> GetOpenedFiles() {
-//        Emit()
-//    }
-
     void SignalStatus(string*);
 };
 
@@ -298,19 +292,20 @@ public:
         for(auto& e : *t) {
             TGVerticalFrame* group_frame = new TGVerticalFrame(files_frame);
             TGLabel*   label = new TGLabel(group_frame, e.second->c_str());
-            TGListBox* box = new TGListBox(group_frame);
-            TGTextButton* add_button = new TGTextButton(group_frame, "Choose Selected");
+            int id = loaded_files.size();
+            TGListBox* box = new TGListBox(group_frame, id);
+            widget_id_to_displayname[id] = *(e.second);
 
             group_frame->AddFrame(label , new TGLayoutHints(kLHintsExpandX));
             group_frame->AddFrame(box, new TGLayoutHints(kLHintsExpandX | kLHintsExpandY));
-            group_frame->AddFrame(add_button , new TGLayoutHints(kLHintsExpandX));
 
             files_frame->AddFrame(group_frame, new TGLayoutHints(kLHintsExpandX | kLHintsExpandY));
-
             group_boxes[*(e.second)] = box;
 
             AddNewFiles(*(e.first), *(e.second)); //p1: filepath, p2: key for lookup(displayname)
             DisplayFilesInBox(loaded_files[*(e.second)], box);
+
+            box->Connect("DoubleClicked(Int_t, Int_t)", "ComparisonPlugin", this, "AddDoubleClicked(Int_t, Int_t)");
         }
 
         files_frame->MapSubwindows();
@@ -374,10 +369,19 @@ public:
         }
     }
 
+    void AddDoubleClicked(int widget_id, int id) {
+//        TGLBEntry* entry = module_dropdown->GetSelectedEntry();
+        cout << "AddDoubleClicked " << widget_id << " ==== " <<  id << endl;
+        string displayname = widget_id_to_displayname[widget_id];
+        TGLBEntry* entry  = group_boxes[displayname]->GetSelectedEntry();
+        cout << entry->GetTitle() << endl;
+    }
+
 
 private:
     map<string, vector<TH1*>> loaded_files;
     map<string, TGListBox*>   group_boxes;
+    map<int, string>          widget_id_to_displayname;
 
     TGCompositeFrame*  mf;
     TGHorizontalFrame* files_frame;
