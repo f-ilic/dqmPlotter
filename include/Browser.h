@@ -20,6 +20,8 @@ public:
     // signal: INTERFACE
     void SignalStatus(string* t); //*SIGNAL*
     void OpenItemDoubleClicked(TH1* t); //*SIGNAL*
+    void FileLoaded(map<string*, string*>* t); //*SIGNAL*
+    void CloseFile(string* t); //*SIGNAL* t==displayname NOT the path
 
     // slot: INTERNAL
     void ReceiveItem(TH1* t); //*SLOT*

@@ -14,7 +14,8 @@ public:
     virtual ~IPlugin() {}
     virtual void DrawInFrame(TGCompositeFrame* frame) = 0;
     virtual void Receive(TH1* t) = 0;
-    virtual void ReceiveNewFileOpen(string* filepath) = 0;
+    virtual void ReceiveFileLoaded(map<string*, string*>* t) = 0;
+    virtual void ReceiveFileClose(string*) = 0;
 
     // TODO: MAYBE>?? DESIGN IT PROPERLY BEFORE IMPLEMENTING
 //    vector<TFile*> GetOpenedFiles() {
@@ -44,8 +45,12 @@ public:
         }
     }
 
-    void ReceiveNewFileOpen(string* filepath) override {
-        cout << "PreviewPlugin::ReceiveNewFileOpen(string*) NOT IMPLEMENTED" << endl;
+    void ReceiveFileLoaded(map<string*, string*>* t) override {
+        cout << "PreviewPlugin::ReceiveNewFileOpen NOT IMPLEMENTED" << endl;
+    }
+
+    void ReceiveFileClose(string*) override {
+        cout << "PreviewPlugin::ReceiveFileClose NOT IMPLEMENTED" << endl;
     }
 
 
@@ -141,11 +146,13 @@ public:
         SuperimposeAll();
     }
 
-    void ReceiveNewFileOpen(string* filepath) override {
-        cout << "SuperimposePlugin::ReceiveNewFileOpen(string*) NOT IMPLEMENTED" << endl;
+    void ReceiveFileLoaded(map<string*, string*>* t) override {
+        cout << "SuperimposePlugin::ReceiveNewFileOpen NOT IMPLEMENTED" << endl;
     }
 
-
+    void ReceiveFileClose(string*) override {
+        cout << "SuperimposePlugin::ReceiveFileClose NOT IMPLEMENTED" << endl;
+    }
 
     void PreviewAll() {
         TCanvas* canvas = preview_canvas->GetCanvas();
@@ -261,11 +268,12 @@ public:
     ComparisonPlugin() {}
 
     void DrawInFrame(TGCompositeFrame* frame) override {
+         mf = frame;
          files_frame = new TGHorizontalFrame(frame);
          TGHorizontalFrame* search_frame = new TGHorizontalFrame(frame);
 
          TGHorizontalFrame* out_frame = new TGHorizontalFrame(frame);
-         selection_box = new TGListBox(out_frame);
+         output_box = new TGListBox(out_frame);
 
          search_box = new TGTextEntry(search_frame);
          applyfilter_button = new TGTextButton(search_frame, "Apply Filter");
@@ -273,44 +281,109 @@ public:
          search_frame->AddFrame(search_box, new TGLayoutHints(kLHintsExpandX));
          search_frame->AddFrame(applyfilter_button);
 
-         out_frame->AddFrame(selection_box, new TGLayoutHints(kLHintsExpandX | kLHintsExpandY));
+         out_frame->AddFrame(output_box, new TGLayoutHints(kLHintsExpandX | kLHintsExpandY));
 
          frame->AddFrame(search_frame, new TGLayoutHints(kLHintsExpandX));
          frame->AddFrame(files_frame, new TGLayoutHints(kLHintsExpandX | kLHintsExpandY));
          frame->AddFrame(out_frame, new TGLayoutHints(kLHintsExpandX | kLHintsExpandY));
+
+         applyfilter_button->Connect("Clicked()", "ComparisonPlugin", this, "ApplyFilterOnAll()");
     }
 
     void Receive(TH1* t) override {
-        TGVerticalFrame* group_frame = new TGVerticalFrame(files_frame);
-        TGListBox* selection_box = new TGListBox(group_frame);
-        TGLabel*   selection_label = new TGLabel(group_frame, t->GetTitle());
+        cout << "ComparisonPlugin::Receive NOT IMPLEMENTED" << endl;
+    }
 
-        selection_box->AddEntry("TEST1", 0);
-        listboxes.push_back(selection_box);
+    void ReceiveFileLoaded(map<string*, string*>* t) override {
+        for(auto& e : *t) {
+            TGVerticalFrame* group_frame = new TGVerticalFrame(files_frame);
+            TGLabel*   label = new TGLabel(group_frame, e.second->c_str());
+            TGListBox* box = new TGListBox(group_frame);
+            TGTextButton* add_button = new TGTextButton(group_frame, "Choose Selected");
 
-        group_frame->AddFrame(selection_label);
-        group_frame->AddFrame(selection_box, new TGLayoutHints(kLHintsExpandX | kLHintsExpandY));
+            group_frame->AddFrame(label , new TGLayoutHints(kLHintsExpandX));
+            group_frame->AddFrame(box, new TGLayoutHints(kLHintsExpandX | kLHintsExpandY));
+            group_frame->AddFrame(add_button , new TGLayoutHints(kLHintsExpandX));
 
-        files_frame->AddFrame(group_frame, new TGLayoutHints(kLHintsExpandX | kLHintsExpandY));
+            files_frame->AddFrame(group_frame, new TGLayoutHints(kLHintsExpandX | kLHintsExpandY));
+
+            group_boxes[*(e.second)] = box;
+
+            AddNewFiles(*(e.first), *(e.second)); //p1: filepath, p2: key for lookup(displayname)
+            DisplayFilesInBox(loaded_files[*(e.second)], box);
+        }
 
         files_frame->MapSubwindows();
         files_frame->MapWindow();
         files_frame->Layout();
     }
 
-    void ReceiveNewFileOpen(string* filepath) override {
-        cout << "ComparisonPlugin::ReceiveNewFileOpen(string*) NOT IMPLEMENTED" << endl;
+    void ReceiveFileClose(string* t) override {
+        cout << "ComparisonPlugin::ReceiveFileClose: " << *t << endl;
+    }
+
+    void DisplayFilesInBox(vector<TH1*> files, TGListBox* box) {
+        box->RemoveAll();
+        for(auto& f : files) {
+            box->AddEntry(f->GetTitle(), box->GetNumberOfEntries());
+        }
+        box->Layout();
+    }
+
+    void ApplyFilterOnAll() {
+        string query = search_box->GetText();
+        for(auto& e : loaded_files) {
+            vector<TH1*> filtered;
+            string displayname = e.first;
+
+            for(auto& plot : e.second) {
+                string plot_name = plot->GetTitle();
+                if(plot_name.find(query) != string::npos) {
+                    filtered.push_back(plot);
+                }
+            }
+            DisplayFilesInBox(filtered, group_boxes[displayname]);
+        }
+    }
+
+
+    // THESE TWO BELONG TOGETHER                     //displayname used as key in loaded_files
+    void AddNewFiles(string file_path, string display_name){
+        cout << "ListAllFilesInBox: " << file_path << endl;
+        TFile* f = TFile::Open(file_path.c_str());
+
+        for (auto i : *(f->GetListOfKeys())) {
+            recurse(((TKey*)i), display_name);
+        }
+    }
+
+    void recurse(TKey* td, string display_name) {
+        TIter list(((TDirectory*)(td->ReadObj()))->GetListOfKeys());
+        TKey *key;
+        while ((key = (TKey*)list())) {
+            TClass *cl1 = gROOT->GetClass(key->GetClassName());
+
+            if (cl1->InheritsFrom("TH1")) {
+                TObject* o = key->ReadObj();
+                loaded_files[display_name].push_back((TH1*)o);
+            }
+
+            if(cl1->InheritsFrom("TDirectory")) {
+                recurse(key, display_name);
+            }
+        }
     }
 
 
 private:
-    vector<TGListBox*> listboxes;
-    vector<TGLabel*>   labels;
+    map<string, vector<TH1*>> loaded_files;
+    map<string, TGListBox*>   group_boxes;
 
+    TGCompositeFrame*  mf;
     TGHorizontalFrame* files_frame;
     TGTextEntry*       search_box;
     TGTextButton*      applyfilter_button;
-    TGListBox*         selection_box;
+    TGListBox*         output_box;
 };
 
 

@@ -25,7 +25,11 @@ void FileViewer::OpenFileInTreeView(const string& remote_file_path, const string
             cout << "================" << endl;
             //TODO: open new file emitsignal HERE!!!!!
             //Emit("OpenNewFile(string*)", );
-
+            string* obj_path = new string(remote_file_path);
+            string* obj_name = new string(displayname);
+            map<string*, string*>* args = new map<string*, string*>;
+            (*args)[obj_path] = obj_name;
+            Emit("FileLoaded(map<string*, string*>*)", args);
         }
     }
 }
@@ -74,6 +78,15 @@ void FileViewer::RemoveSelectedItem() {
 
     if(!item)
         return;
+
+    // find the selected file display name
+    // and emit a signal that it is being removed
+    for(auto& e : open_files) {
+        if(e.second == item) {
+            cout << "DELETING " << e.first << endl;
+            Emit("CloseFile(string*)", new string(e.first));
+        }
+    }
 
     tree_items_map.erase(item);
     list_tree->DeleteItem(item);

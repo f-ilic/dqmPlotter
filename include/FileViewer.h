@@ -37,8 +37,9 @@ public:
     /// Emits "SignalStatus(string*)" which is received by the browser
     /// which in turn also emits a "SignalStatus(string*)", which is
     /// intended to be connected to StatusBar::ReceiveStatus(string*)
-    void SignalStatus(string*); //*SIGNAL
-
+    void SignalStatus(string*); //*SIGNAL*
+    void FileLoaded(map<string*, string*>*); //*SIGNAL*
+    void CloseFile(string*); //*SIGNAL*
 
 
 //slot: INTERFACE

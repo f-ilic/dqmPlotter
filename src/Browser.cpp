@@ -10,6 +10,17 @@ Browser::Browser() {
                         &file_view,
                         "DisplayInTreeView(map<string*, string*>*)");
 
+    file_view.Connect("FileLoaded(map<string*, string*>*)",
+                      "Browser",
+                      this,
+                      "FileLoaded(map<string*, string*>*)");
+
+    file_view.Connect("CloseFile(string*)",
+                      "Browser",
+                      this,
+                      "CloseFile(string*)");
+
+
     file_view.Connect("ItemDoubleClicked(TH1*)", "Browser", this, "ReceiveItem(TH1*)");
 
     file_view.Connect("SignalStatus(string*)", "Browser", this, "SignalStatus(string*)");
@@ -51,3 +62,10 @@ void Browser::SignalStatus(string* t) {
     Emit("SignalStatus(string*)", t);
 }
 
+void Browser::FileLoaded(map<string*, string*>* t) {
+    Emit("FileLoaded(map<string*, string*>*)", t);
+}
+
+void Browser::CloseFile(string* t) {
+    Emit("CloseFile(string*", t);
+}

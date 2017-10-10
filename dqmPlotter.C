@@ -24,6 +24,8 @@ void dqmPlotter() {
 
     MenuBar*  menu = new MenuBar();
     Browser* browser = new Browser();
+//    IPlugin* plugin = new PreviewPlugin();
+//    IPlugin* plugin = new SuperimposePlugin();
     IPlugin* plugin = new ComparisonPlugin();
     StatusBar* status_bar = new StatusBar();
 
@@ -48,8 +50,11 @@ void dqmPlotter() {
     main_frame->MapSubwindows();
     main_frame->MapWindow();
     main_frame->Layout();
-    
+
+    browser->Connect("FileLoaded(map<string*, string*>*)", "IPlugin", plugin, "ReceiveFileLoaded(map<string*, string*>*)");
     browser->Connect("OpenItemDoubleClicked(TH1*)", "IPlugin", plugin, "Receive(TH1*)");
+    browser->Connect("CloseFile(string*)", "IPlugin", plugin, "ReceiveFileClose(string*)");
+
     menu->Connect("IndexUpdated()", "Browser", browser, "UpdateLists()");
     
     browser->Connect("SignalStatus(string*)", "StatusBar", status_bar, "ReceiveStatus(string*)");
