@@ -317,10 +317,10 @@ public:
         cout << "ComparisonPlugin::ReceiveFileClose: " << *t << endl;
     }
 
-    void DisplayFilesInBox(vector<TH1*> files, TGListBox* box) {
+    void DisplayFilesInBox(vector<string> files, TGListBox* box) {
         box->RemoveAll();
         for(auto& f : files) {
-            box->AddEntry(f->GetTitle(), box->GetNumberOfEntries());
+            box->AddEntry(f.c_str(), box->GetNumberOfEntries());
         }
         box->Layout();
     }
@@ -328,13 +328,12 @@ public:
     void ApplyFilterOnAll() {
         string query = search_box->GetText();
         for(auto& e : loaded_files) {
-            vector<TH1*> filtered;
+            vector<string> filtered;
             string displayname = e.first;
 
-            for(auto& plot : e.second) {
-                string plot_name = plot->GetTitle();
+            for(auto& plot_name : e.second) {
                 if(plot_name.find(query) != string::npos) {
-                    filtered.push_back(plot);
+                    filtered.push_back(plot_name);
                 }
             }
             DisplayFilesInBox(filtered, group_boxes[displayname]);
@@ -348,11 +347,11 @@ public:
         TFile* f = TFile::Open(file_path.c_str());
 
         for (auto i : *(f->GetListOfKeys())) {
-            recurse(((TKey*)i), display_name);
+            recurse(((TKey*)i), display_name, "");
         }
     }
 
-    void recurse(TKey* td, string display_name) {
+    void recurse(TKey* td, string display_name, string current_path) {
         TIter list(((TDirectory*)(td->ReadObj()))->GetListOfKeys());
         TKey *key;
         while ((key = (TKey*)list())) {
@@ -360,11 +359,11 @@ public:
 
             if (cl1->InheritsFrom("TH1")) {
                 TObject* o = key->ReadObj();
-                loaded_files[display_name].push_back((TH1*)o);
+                loaded_files[display_name].push_back(current_path + "/" + string(o->GetTitle()));
             }
 
             if(cl1->InheritsFrom("TDirectory")) {
-                recurse(key, display_name);
+                recurse(key, display_name, current_path + "/" + string(key->GetTitle()));
             }
         }
     }
@@ -374,14 +373,32 @@ public:
         cout << "AddDoubleClicked " << widget_id << " ==== " <<  id << endl;
         string displayname = widget_id_to_displayname[widget_id];
         TGLBEntry* entry  = group_boxes[displayname]->GetSelectedEntry();
-        cout << entry->GetTitle() << endl;
+        string selected_plot_name = entry->GetTitle();
+
+        cout << selected_plot_name << endl;
+
+
+        string current_plot_name;
+
+//        for(auto& e : loaded_files[displayname]) {
+//            current_plot_name = e->GetTitle();
+//            if(!current_plot_name.compare(selected_plot_name)) {
+//                output_box->AddEntry(current_plot_name.c_str(), output_box->GetNumberOfEntries());
+//                cout << "adding: " << current_plot_name << endl;
+//            }
+//        }
+        string tmp = string(group_boxes[displayname]->GetEntry(id)->GetTitle()) + "  (" + displayname + ")";
+        output_box->AddEntry(tmp.c_str(), output_box->GetNumberOfEntries());
+        output_box->Layout();
     }
 
 
 private:
-    map<string, vector<TH1*>> loaded_files;
+    map<string, vector<string>> loaded_files;
     map<string, TGListBox*>   group_boxes;
-    map<int, string>          widget_id_to_displayname;
+    map<int, string>          widget_id_to_displayname; // the widget is the tglistbox
+                                                        // in each group_frame
+    vector<TH1*> selected;
 
     TGCompositeFrame*  mf;
     TGHorizontalFrame* files_frame;
