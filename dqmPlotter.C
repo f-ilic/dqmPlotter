@@ -25,8 +25,8 @@ void dqmPlotter() {
     MenuBar*  menu = new MenuBar();
     Browser* browser = new Browser();
 //    IPlugin* plugin = new PreviewPlugin();
-//    IPlugin* plugin = new SuperimposePlugin();
-    IPlugin* plugin = new ComparisonPlugin();
+   IPlugin* plugin = new SuperimposePlugin();
+    // IPlugin* plugin = new ComparisonPlugin();
     StatusBar* status_bar = new StatusBar();
 
     TGHorizontalFrame* containter_frame = new TGHorizontalFrame(main_frame);

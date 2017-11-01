@@ -112,8 +112,8 @@ void FileViewer::RemoveAll() {
 
 TFile* FileViewer::GetRemoteFile(const string& filepath, const string& displayname) {
     if(!DEVMODE) {
-        gEnv->SetValue("Davix.GSI.UserCert", "/afs/cern.ch/user/p/pjurgiel/.globus/copy/usercert.pem");
-        gEnv->SetValue("Davix.GSI.UserKey", "/afs/cern.ch/user/p/pjurgiel/.globus/copy/userkey_nopass.pem");
+        gEnv->SetValue("Davix.GSI.UserCert", Configuration::Instance().GetValue(Configuration::USERCERTPATH).c_str());
+        gEnv->SetValue("Davix.GSI.UserKey", Configuration::Instance().GetValue(Configuration::USERPUBLICKEYPATH).c_str());
         gEnv->SetValue("Davix.Debug", 1);
     }
     

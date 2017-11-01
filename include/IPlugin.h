@@ -71,12 +71,13 @@ public:
             TGVerticalFrame* selection_buttons_frame = new TGVerticalFrame(preview_frame);
                 TGTextButton* remove_selected_item_button = new TGTextButton(selection_buttons_frame, "Remove Selected");
                 TGTextButton* clear_button = new TGTextButton(selection_buttons_frame, "Clear All");
+                superimpose_mode_button = new TGCheckButton(selection_buttons_frame, "Multiaxis");
 
         TGHorizontalFrame* superimpose_frame = new TGHorizontalFrame(frame);
-            TGVerticalFrame* option_frame = new TGVerticalFrame(superimpose_frame, 200, 250, kFixedWidth);
-                TGHorizontalFrame* controlFrameXRange = new TGHorizontalFrame(option_frame, 200, 40);
-                TGHorizontalFrame* controlFrameYRange = new TGHorizontalFrame(option_frame, 200, 40);
-                TGTextButton* apply_custom_button = new TGTextButton(option_frame, "Apply");
+            // TGVerticalFrame* option_frame = new TGVerticalFrame(superimpose_frame, 200, 250, kFixedWidth);
+            //     TGHorizontalFrame* controlFrameXRange = new TGHorizontalFrame(option_frame, 200, 40);
+            //     TGHorizontalFrame* controlFrameYRange = new TGHorizontalFrame(option_frame, 200, 40);
+            //     TGTextButton* apply_custom_button = new TGTextButton(option_frame, "Apply");
 
 
         preview_canvas = new TRootEmbeddedCanvas("Preview", frame);
@@ -85,6 +86,8 @@ public:
 
         selection_buttons_frame->AddFrame(remove_selected_item_button, new TGLayoutHints(kLHintsExpandX, 2,2,2,2));
         selection_buttons_frame->AddFrame(clear_button, new TGLayoutHints(kLHintsExpandX, 2,2,2,2));
+        selection_buttons_frame->AddFrame(superimpose_mode_button, new TGLayoutHints(kLHintsExpandX, 2,2,2,2));
+
 
         selection_frame->AddFrame(selection_box, new TGLayoutHints(kLHintsExpandX | kLHintsExpandY, 2,2,2,2));
         selection_frame->AddFrame(selection_buttons_frame, new TGLayoutHints(kLHintsExpandX, 2,2,2,2));
@@ -92,32 +95,32 @@ public:
         preview_frame->AddFrame(selection_frame, new TGLayoutHints(kLHintsExpandY, 2,2,2,2));
         preview_frame->AddFrame(preview_canvas, new TGLayoutHints(kLHintsExpandX | kLHintsExpandY, 2,2,2,2));
 
-        // X Axis
-        xRangeCheckbox    = new TGCheckButton(option_frame,"Use Custom X Range");
-        xminNumbertextbox = new TGNumberEntryField(controlFrameXRange);
-        xmaxNumbertextbox = new TGNumberEntryField(controlFrameXRange);
+        // // X Axis
+        // xRangeCheckbox    = new TGCheckButton(option_frame,"Use Custom X Range");
+        // xminNumbertextbox = new TGNumberEntryField(controlFrameXRange);
+        // xmaxNumbertextbox = new TGNumberEntryField(controlFrameXRange);
 
-        controlFrameXRange->AddFrame(xminNumbertextbox, new TGLayoutHints(kLHintsLeft | kLHintsExpandX, 2,2,2,2));
-        controlFrameXRange->AddFrame(xmaxNumbertextbox, new TGLayoutHints(kLHintsLeft | kLHintsExpandX, 2,2,2,2));
+        // controlFrameXRange->AddFrame(xminNumbertextbox, new TGLayoutHints(kLHintsLeft | kLHintsExpandX, 2,2,2,2));
+        // controlFrameXRange->AddFrame(xmaxNumbertextbox, new TGLayoutHints(kLHintsLeft | kLHintsExpandX, 2,2,2,2));
 
-        // Y Axis
-        yRangeCheckbox    = new TGCheckButton(option_frame,"Use Custom Y Range");
-        yminNumbertextbox = new TGNumberEntryField(controlFrameYRange);
-        ymaxNumbertextbox = new TGNumberEntryField(controlFrameYRange);
+        // // Y Axis
+        // yRangeCheckbox    = new TGCheckButton(option_frame,"Use Custom Y Range");
+        // yminNumbertextbox = new TGNumberEntryField(controlFrameYRange);
+        // ymaxNumbertextbox = new TGNumberEntryField(controlFrameYRange);
 
-        controlFrameYRange->AddFrame(yminNumbertextbox, new TGLayoutHints(kLHintsLeft | kLHintsExpandX, 2,2,2,2));
-        controlFrameYRange->AddFrame(ymaxNumbertextbox, new TGLayoutHints(kLHintsLeft | kLHintsExpandX, 2,2,2,2));
+        // controlFrameYRange->AddFrame(yminNumbertextbox, new TGLayoutHints(kLHintsLeft | kLHintsExpandX, 2,2,2,2));
+        // controlFrameYRange->AddFrame(ymaxNumbertextbox, new TGLayoutHints(kLHintsLeft | kLHintsExpandX, 2,2,2,2));
 
         // ------- Add to Custom
-        option_frame->AddFrame(xRangeCheckbox,     new TGLayoutHints(kLHintsExpandX, 2,2,2,2));
-        option_frame->AddFrame(controlFrameXRange, new TGLayoutHints(kLHintsExpandX, 2,2,2,2));
+        // option_frame->AddFrame(xRangeCheckbox,     new TGLayoutHints(kLHintsExpandX, 2,2,2,2));
+        // option_frame->AddFrame(controlFrameXRange, new TGLayoutHints(kLHintsExpandX, 2,2,2,2));
 
-        option_frame->AddFrame(yRangeCheckbox,     new TGLayoutHints(kLHintsExpandX, 2,2,2,2));
-        option_frame->AddFrame(controlFrameYRange, new TGLayoutHints(kLHintsExpandX, 2,2,2,2));
+        // option_frame->AddFrame(yRangeCheckbox,     new TGLayoutHints(kLHintsExpandX, 2,2,2,2));
+        // option_frame->AddFrame(controlFrameYRange, new TGLayoutHints(kLHintsExpandX, 2,2,2,2));
 
-        option_frame->AddFrame(apply_custom_button, new TGLayoutHints(kLHintsExpandX, 2,2,2,2));
+        // option_frame->AddFrame(apply_custom_button, new TGLayoutHints(kLHintsExpandX, 2,2,2,2));
 
-        superimpose_frame->AddFrame(option_frame, new TGLayoutHints(kLHintsBottom, 2,2,2,2));
+        // superimpose_frame->AddFrame(option_frame, new TGLayoutHints(kLHintsBottom, 2,2,2,2));
         superimpose_frame->AddFrame(superimpose_canvas, new TGLayoutHints(kLHintsExpandX | kLHintsExpandY, 2,2,2,2));
 
         frame->AddFrame(preview_frame, new TGLayoutHints(kLHintsExpandX | kLHintsExpandY, 2,2,2,2));
@@ -125,7 +128,9 @@ public:
 
         remove_selected_item_button->Connect("Clicked()", "SuperimposePlugin", this, "RemoveSelected()");
         clear_button->Connect("Clicked()", "SuperimposePlugin", this, "ClearAll()");
-        apply_custom_button->Connect("Clicked()", "SuperimposePlugin", this, "SuperimposeAll()");
+        superimpose_mode_button->Connect("Clicked()", "SuperimposePlugin", this, "SuperimposeAll()");
+
+        // apply_custom_button->Connect("Clicked()", "SuperimposePlugin", this, "SuperimposeAll()");
     }
 
     void Receive(TH1* t) override {
@@ -184,6 +189,15 @@ public:
             copies.push_back((TH1*)elem.second->Clone());
         }
 
+        bool is_multiaxis_checked = superimpose_mode_button->IsDown();
+
+        if(is_multiaxis_checked)
+            superimpose_multiaxis(canvas, copies, "reeeeeee axis");
+        else
+            superimpose(canvas, copies, "buuuu axis");
+    }
+
+    void superimpose(TCanvas* canvas, std::vector<TH1*> plots, std::string title){
         canvas->cd();
 
         vector<Int_t> basic_colors = { kBlue, kGreen, kCyan, kMagenta, kRed };
@@ -196,17 +210,11 @@ public:
         auto legend = new TLegend(0.65,0.8,0.85,0.9);
 
         int idx = 0;
-        for(auto& elem : copies) {
-
-            if(xRangeCheckbox->IsOn())
-                elem->SetAxisRange(xminNumbertextbox->GetNumber(), xmaxNumbertextbox->GetNumber(),"X");
-
-            if(yRangeCheckbox->IsOn())
-                elem->SetAxisRange(yminNumbertextbox->GetNumber(), ymaxNumbertextbox->GetNumber(),"Y");
+        for(auto& elem : plots) {
 
             elem->SetLineColor(colors[idx]);
             legend->AddEntry(elem, elem->GetTitle());
-            elem->SetTitle("Superimposed");
+            elem->SetTitle(title.c_str());
 
             if(idx==0) elem->Draw();
             else       elem->Draw("SAME");
@@ -216,6 +224,102 @@ public:
         }
 
         legend->Draw();
+        canvas->Update(); 
+    }
+
+    void superimpose_multiaxis(TCanvas* canvas, std::vector<TH1*> plots, std::string title)
+    {
+        // TODO: works alright but its nasty as fuck; relies on non obvious ordering
+        //   -IDEA: instead of plotting the largest Xaxis plot seperatly, swap in in the
+        //          vector to the first place (plots[0]) and then loop over all the plots
+        //          and just have a special case there.
+
+        canvas->cd();
+
+        std::vector<Int_t> basic_colors = { kRed, kCyan, kMagenta, kGreen, kBlue };
+        std::vector<Int_t> colors;
+        for(auto c : basic_colors) colors.push_back(c);
+        for(auto c : basic_colors) colors.push_back(c+2);
+        for(auto c : basic_colors) colors.push_back(c-7);
+        for(auto c : basic_colors) colors.push_back(c-4);
+        for(auto c : basic_colors) colors.push_back(c-9);
+        auto legend = new TLegend(0.65,0.8,0.85,0.9);
+
+
+        // How all of this works:
+        // We find the plot that has the largest X value on the x axis, so that all the
+        // other plots essentially fit into that one. that plot its plots[largest_plot_idx]
+        int maxx = 0, largest_plot_idx = 0;
+
+        for(int i=0; i<plots.size(); i++) {
+            if(plots[i]->GetXaxis()->GetXmax() > maxx) {
+                maxx = plots[i]->GetXaxis()->GetXmax();
+                largest_plot_idx = i;
+            }
+        }
+        plots[largest_plot_idx]->SetStats(false);
+        legend->AddEntry(plots[largest_plot_idx], plots[largest_plot_idx]->GetTitle());
+
+        // Draw the Plot, disable all the axis labels
+        // Then we draw that plot before anything else, and remove it from
+        // @arg plots, so that we can now iterate over @arg plots
+        // and superimpose on top of the largest one
+        plots[largest_plot_idx]->SetTitle(title.c_str());
+        plots[largest_plot_idx]->GetXaxis()->SetTitle("");
+        plots[largest_plot_idx]->GetYaxis()->SetTitle("");
+        plots[largest_plot_idx]->Draw();
+        legend->Draw();
+
+        canvas->Update();
+        plots.erase(plots.begin() + largest_plot_idx);
+
+        float scale;
+        int offset=0;
+        int ctr=0;
+        for(auto& plot : plots) {
+            auto curr_color = colors[ctr];
+
+            plot->SetStats(false);
+            scale = gPad->GetUymax()/plot->GetMaximum();
+            plot->SetLineColor(curr_color);
+
+
+            // YAxis stuff
+            //offset the axis after the second plot by 5% of the maximum of Yaxis
+            offset = (float(gPad->GetUxmax())*0.05)*ctr;
+
+            TGaxis* Yaxis = new TGaxis(gPad->GetUxmax()-offset, gPad->GetUymin(),
+                                       gPad->GetUxmax()-offset, gPad->GetUymax(),
+                                       0, plot->GetMaximum(),
+                                       505,"+L");
+
+            Yaxis->SetLineColor(curr_color);
+            Yaxis->SetLabelColor(curr_color);
+            Yaxis->Draw();
+
+            // XAxis stuff
+            offset = (float(gPad->GetUymax())*0.05)*ctr;
+            TGaxis* Xaxis = new TGaxis(gPad->GetUxmin(), gPad->GetUymax() - offset,
+                                       gPad->GetUxmax(), gPad->GetUymax() - offset,
+                                       plot->GetXaxis()->GetXmin(), plot->GetXaxis()->GetXmax(),
+                                       505,"");
+
+            Xaxis->SetLineColor(curr_color);
+            Xaxis->SetLabelColor(curr_color);
+            Xaxis->Draw();
+
+            plot->Scale(scale); // Y rescale
+            plot->SetBins(plot->GetNbinsX(), 0, maxx); // X rescale
+
+            // Histogram stuff
+            plot->Draw("][ same hist");
+
+            // Legend stuff
+            legend->AddEntry(plot, plot->GetTitle());
+            legend->Draw();
+
+            ctr++;
+        }
         canvas->Update();
     }
 
@@ -253,12 +357,8 @@ private:
     TRootEmbeddedCanvas* preview_canvas;
     TRootEmbeddedCanvas* superimpose_canvas;
 
-    TGCheckButton* xRangeCheckbox;
-    TGCheckButton* yRangeCheckbox;
-    TGNumberEntryField* xminNumbertextbox;
-    TGNumberEntryField* xmaxNumbertextbox;
-    TGNumberEntryField* yminNumbertextbox;
-    TGNumberEntryField* ymaxNumbertextbox;
+    TGCheckButton* superimpose_mode_button;
+    bool is_multiaxis_superimpose = false;
 };
 
 class ComparisonPlugin : public IPlugin {
