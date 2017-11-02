@@ -5,7 +5,7 @@
 #include <map>
 
 
-#define DEVMODE false
+#define DEVMODE true
 #define CONFIGPATH "DATA/con.fig"
 
 //FIXME: make into good singleton

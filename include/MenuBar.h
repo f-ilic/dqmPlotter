@@ -24,14 +24,14 @@ public:
 
     void HandleMenu(Int_t menu_id);
     void DrawInFrame(TGMainFrame* main_frame);
-    void SetCertificatePath(const string& path) const;
-    void SetPublicKeyPath(const string& path) const;
+    void SetCertificatePath(const string& path);
+    void SetPublicKeyPath(const string& path);
     void UpdateIndex();                             //*SIGNAL*
     string OpenDialog(Int_t menu_id) const;
     
     void TogglePopupEntry(Int_t menu_id);
-    
     void IndexUpdated();      //*SIGNAL*
+    void SignalStatus(std::string* status);      //*SIGNAL*
 
 public:
     const string app_path;
@@ -39,13 +39,16 @@ public:
 private:
     TGMenuBar*    menu_bar;
     TGPopupMenu*  popup_menu;
+    TGPopupMenu*  plugin_menu;
+
 
     enum EMyMessageTypes {
         M_USER_CERT,
         M_USER_KEY,
         M_UPDATE_INDEX,
         M_WORK_WITH_LOCAL_COPIES,
-        M_FILE_EXIT
+        M_FILE_EXIT,
+        M_PREVIEW_PLUGIN
     };
 };
 

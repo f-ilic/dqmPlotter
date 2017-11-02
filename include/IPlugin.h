@@ -59,15 +59,16 @@ public:
     SuperimposePlugin() {}
 
     void DrawInFrame(TGCompositeFrame* frame) override {
+        main_frame = frame;
 
-        TGHorizontalFrame* preview_frame = new TGHorizontalFrame(frame);
+        preview_frame = new TGHorizontalFrame(frame);
             TGVerticalFrame* selection_frame = new TGVerticalFrame(preview_frame, 202, 250, kFixedWidth);
             TGVerticalFrame* selection_buttons_frame = new TGVerticalFrame(preview_frame);
                 TGTextButton* remove_selected_item_button = new TGTextButton(selection_buttons_frame, "Remove Selected");
                 TGTextButton* clear_button = new TGTextButton(selection_buttons_frame, "Clear All");
                 superimpose_mode_button = new TGCheckButton(selection_buttons_frame, "Multiaxis");
 
-        TGHorizontalFrame* superimpose_frame = new TGHorizontalFrame(frame);
+        superimpose_frame = new TGHorizontalFrame(frame);
             // TGVerticalFrame* option_frame = new TGVerticalFrame(superimpose_frame, 200, 250, kFixedWidth);
             //     TGHorizontalFrame* controlFrameXRange = new TGHorizontalFrame(option_frame, 200, 40);
             //     TGHorizontalFrame* controlFrameYRange = new TGHorizontalFrame(option_frame, 200, 40);
@@ -347,6 +348,11 @@ public:
 private:
     TGListBox*         selection_box;
     map<int, TH1*>     selected_objects;
+
+    TGCompositeFrame* main_frame;
+
+    TGHorizontalFrame* preview_frame;
+    TGHorizontalFrame* superimpose_frame;
 
     TRootEmbeddedCanvas* preview_canvas;
     TRootEmbeddedCanvas* superimpose_canvas;

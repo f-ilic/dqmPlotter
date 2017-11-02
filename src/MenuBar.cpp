@@ -28,6 +28,7 @@ void MenuBar::HandleMenu(Int_t menu_id) {
         this->TogglePopupEntry(M_WORK_WITH_LOCAL_COPIES);
         break;
     }
+
     case M_FILE_EXIT:{
         string cmd = "rm -rf " + Configuration::Instance().GetValue(Configuration::TMPDATADIRECTORY) + "*";
         if(system(cmd.c_str())) {
@@ -58,19 +59,20 @@ void MenuBar::DrawInFrame(TGMainFrame *main_frame) {
     popup_menu->AddSeparator(popup_menu->GetEntry(M_FILE_EXIT));
 
     menu_bar->AddPopup("File Browser", popup_menu, new TGLayoutHints(kLHintsLeft, 0, 4, 0, 0));
+
     main_frame->AddFrame(menu_bar, new TGLayoutHints(kLHintsLeft ,2,2,2,2));
     popup_menu->Connect("Activated(Int_t)", "MenuBar", this, "HandleMenu(Int_t)");
 }
 
-void MenuBar::SetCertificatePath(const string& path) const{
+void MenuBar::SetCertificatePath(const string& path) {
     if (path != ""){
-//        StatusBar::GetStatusBar().GetStatusBarControl()->SetText((string("Setting certificate path to: ") + path).c_str(), 0);
+        Emit("SignalStatus(string*)", new std::string("Setting certificate path to: " + path));
     }
 }
 
-void MenuBar::SetPublicKeyPath(const string& path) const{
-    if (path != ""){       
-//        StatusBar::GetStatusBar().GetStatusBarControl()->SetText((string("Setting public key path to: ") + path).c_str(), 0);
+void MenuBar::SetPublicKeyPath(const string& path) {
+    if (path != ""){
+        Emit("SignalStatus(string*)", new std::string("Setting key path to: " + path));
     }
 }
 
@@ -79,8 +81,8 @@ void MenuBar::UpdateIndex(){
         Configuration::Instance().GetValue(Configuration::USERPUBLICKEYPATH) == ""){
         cout << "Certificates not set: \n\t" << Configuration::Instance().GetValue(Configuration::USERCERTPATH) << "\n\t"
                                              << Configuration::Instance().GetValue(Configuration::USERPUBLICKEYPATH) << endl;
-                                             
-//        StatusBar::GetStatusBar().GetStatusBarControl()->SetText("Certificates not set", 0);
+
+        Emit("SignalStatus(string*)", new std::string("Certificates not set"));
 
     } else {
         string cmd = "python " + app_path + Configuration::Instance().GetValue(Configuration::UPDATEDATABASESCRIPTPATH) + " " +
@@ -90,17 +92,18 @@ void MenuBar::UpdateIndex(){
                 Configuration::Instance().GetValue(Configuration::USERPUBLICKEYPATH);
 
         cout << "Running: " << cmd << endl;
-//        StatusBar::GetStatusBar().GetStatusBarControl()->SetText("Running database update. Please wait...", 0);
+
+        Emit("SignalStatus(string*)", new std::string("Running database update. Please wait..."));
 
         int res = system(cmd.c_str());
 
         cout << "Exit code: " << res << endl;
         if (res == 0) {
-//            StatusBar::GetStatusBar().GetStatusBarControl()->SetText("Database updated successfully.", 0);
-            
+            Emit("SignalStatus(string*)", new std::string("Database updated successfully."));
+
             Emit("IndexUpdated()");
         } else {
-//            StatusBar::GetStatusBar().GetStatusBarControl()->SetText("Error. Database update not successful.", 0);
+            Emit("SignalStatus(string*)", new std::string("Error. Database update not successful."));
         }
     }
 }
