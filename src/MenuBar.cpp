@@ -3,7 +3,7 @@
 
 string MenuBar::OpenDialog(Int_t menu_id) const {
     TGFileInfo file_info_;
-    const char *filetypes[] = {"Certificate", "*.pem", 0, 0};
+    const char *filetypes[] = {"Certificate", "*.cert", 0, 0};
     file_info_.fFileTypes = filetypes;
     TGFileDialog* loadDialog = new TGFileDialog(gClient->GetDefaultRoot(), nullptr, kFDOpen, &file_info_);
     
